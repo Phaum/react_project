@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1738511421125,
+    "title": "# С++",
+    "content": "Курс по С++",
+    "audience": [
+      "guest",
+      "student",
+      "teacher",
+      "admin"
+    ],
+    "group": [
+      "ISTARK"
+    ],
+    "image": "/uploads-materials/1738688639420_1738231205814_ISO_C++_Logo.svg.png",
+    "files": [
+      "/uploads-materials/1738690188456_doop-shablon.pdf"
+    ],
+    "articles": [
+      {
+        "id": "1738520854952",
+        "title": "# Часть 1",
+        "content": "asd",
+        "audience": [],
+        "image": "/uploads-materials/1738687509158_сом-в.png",
+        "files": [
+          "/uploads-materials/1738684947832_doop-shablon.pdf"
+        ]
+      },
+      {
+        "id": "1738528827791",
+        "title": "## Часть 2",
+        "content": "часть 2",
+        "audience": [],
+        "image": null,
+        "files": []
+      },
+      {
+        "id": "1738528836044",
+        "title": "Часть 3",
+        "content": "часть 3",
+        "audience": [],
+        "image": null,
+        "files": []
+      }
+    ]
+  }
+]

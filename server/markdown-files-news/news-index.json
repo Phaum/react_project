@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1737921611680,
+    "title": "## Виды классов ООП C++",
+    "content": "Содержание новости",
+    "audience": [
+      "admin",
+      "teacher"
+    ],
+    "image": "/uploads-news/1738231205814_ISO_C++_Logo.svg.png"
+  },
+  {
+    "id": 1738282937884,
+    "title": "План разработки проекта дисциплины",
+    "audience": [
+      "admin",
+      "teacher"
+    ],
+    "image": "/uploads-news/1738687575512_1738282937883_spbgasu02.png",
+    "files": [
+      "/uploads-news/1738282937883_План разработки проекта дисциплины.docx"
+    ]
+  },
+  {
+    "id": 1738446918577,
+    "title": "Новость для гостей",
+    "audience": [
+      "guest"
+    ],
+    "image": "/uploads-news/1738446918575_IMG_0988.jpg",
+    "files": []
+  },
+  {
+    "id": 1738860147469,
+    "title": "Новость для студентов",
+    "audience": [
+      "student"
+    ],
+    "image": null,
+    "files": []
+  },
+  {
+    "id": 1738860186882,
+    "title": "Новость для преподавателей",
+    "audience": [
+      "teacher"
+    ],
+    "image": null,
+    "files": []
+  }
+]

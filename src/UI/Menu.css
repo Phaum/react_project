@@ -1,0 +1,93 @@
+.menu-container {
+    /*display: flex;*/
+    /*flex-direction: column; !* Располагаем элементы в столбик *!*/
+    /*align-items: flex-start; !* Выравниваем элементы по левому краю *!*/
+    background-color: #ffffff;
+    padding: 10px 20px;
+    /*position: relative;*/
+    /*width: %; !* Фиксированная ширина меню *!*/
+    /*height: 100vh; !* Растягиваем на всю высоту экрана *!*/
+    /*box-shadow: 2px 0 5px rgba(0, 0, 0, 0); !* Тень справа *!*/
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column; /* Столбик */
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.menu-item {
+    width: 90%; /* Растягиваем элементы на всю ширину */
+}
+
+.menu-item a {
+    display: block;
+    color: #545657;
+    text-decoration: none;
+    padding: 10px;
+    transition: 0.3s;
+    text-align: left; /* Выравнивание текста по левому краю */
+    width: 100%; /* Растягиваем ссылку на всю ширину */
+}
+
+.menu-item a:hover {
+    background-color: #b1afaf;
+    border-radius: 5px;
+}
+
+/* Кнопка меню (для мобильных) */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #545657;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Выпадающее меню */
+.dropdown-menu {
+    position: relative; /* Убираем absolute */
+    width: 100%; /* Меню занимает всю ширину блока */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.dropdown-item {
+    color: #373939;
+    padding: 10px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #b1afaf;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .menu {
+        display: none; /* Прячем меню по умолчанию */
+    }
+    .menu-toggle {
+        display: block; /* Показываем кнопку */
+    }
+    .menu-container {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 200px;
+        height: 100vh;
+        background-color: #ffffff;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+    }
+}

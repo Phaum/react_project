@@ -1,0 +1,255 @@
+const express = require("express");
+const cors = require("cors"); // Импортируем пакет CORS
+const bodyParser = require("body-parser");
+const fs = require("fs");
+const path = require("path");
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = 'your_secret_key';
+
+const app = express();
+const PORT = 5000;
+
+const bcrypt = require('bcrypt');
+const { body, validationResult } = require('express-validator');
+
+const usersFile = path.join(__dirname, 'users.json');
+
+if (!fs.existsSync(usersFile)) {
+    fs.writeFileSync(usersFile, JSON.stringify([]));
+}
+
+app.use(express.json()); // Для обработки JSON тела запросов
+
+// Включаем CORS
+app.use(cors()); // Применяем CORS ко всем маршрутам
+
+// Middleware для обработки JSON
+app.use(bodyParser.json());
+
+// Папка для хранения файлов .md
+const markdownFolder = path.join(__dirname, "markdown-files");
+
+if (!fs.existsSync(markdownFolder)) {
+    fs.mkdirSync(markdownFolder);
+}
+
+
+// Эндпоинт для сохранения новости
+app.post("/save", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
+    const { title, content } = req.body;
+
+    if (!title || !content) {
+        return res.status(400).send("Заголовок и содержание обязательны");
+    }
+
+    const id = Date.now();
+    const filePath = path.join(markdownFolder, `${id}.md`);
+    const indexPath = path.join(markdownFolder, "news-index.json");
+
+    fs.writeFile(filePath, content, (err) => {
+        if (err) {
+            console.error("Ошибка при сохранении файла:", err);
+            return res.status(500).send("Ошибка при сохранении новости");
+        }
+
+        let newsIndex = [];
+        if (fs.existsSync(indexPath)) {
+            newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+        }
+        newsIndex.push({ id, title });
+
+        fs.writeFile(indexPath, JSON.stringify(newsIndex, null, 2), (err) => {
+            if (err) {
+                console.error("Ошибка при обновлении индекса:", err);
+                return res.status(500).send("Ошибка при обновлении индекса");
+            }
+
+            res.send({ message: "Новость успешно сохранена", id });
+        });
+    });
+});
+
+
+
+// Эндпоинт для чтения новостей
+app.get("/read", (req, res) => {
+    const indexPath = path.join(markdownFolder, "news-index.json");
+
+    if (fs.existsSync(indexPath)) {
+        const newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+        res.send(newsIndex);
+    } else {
+        res.status(404).send("Список новостей пуст");
+    }
+});
+
+
+// Эндпоинт для получения полного текста новости по ID
+app.delete("/news/:id", (req, res) => {
+    const { id } = req.params;
+    const filePath = path.join(markdownFolder, `${id}.md`);
+    const indexPath = path.join(markdownFolder, "news-index.json");
+
+    if (fs.existsSync(filePath)) {
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Ошибка при удалении файла:", err);
+                return res.status(500).send("Не удалось удалить новость");
+            }
+
+            let newsIndex = [];
+            if (fs.existsSync(indexPath)) {
+                newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+                newsIndex = newsIndex.filter((news) => news.id !== id);
+            }
+
+            fs.writeFile(indexPath, JSON.stringify(newsIndex, null, 2), (err) => {
+                if (err) {
+                    console.error("Ошибка при обновлении индекса:", err);
+                    return res.status(500).send("Ошибка при обновлении индекса");
+                }
+
+                res.send({ message: "Новость успешно удалена" });
+            });
+        });
+    } else {
+        res.status(404).send("Новость не найдена");
+    }
+});
+
+
+
+app.get("/news/:id", (req, res) => {
+    const { id } = req.params;
+    const filePath = path.join(markdownFolder, `${id}.md`);
+
+    if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, "utf-8");
+        const indexPath = path.join(markdownFolder, "news-index.json");
+        const newsIndex = fs.existsSync(indexPath)
+            ? JSON.parse(fs.readFileSync(indexPath, "utf-8"))
+            : [];
+
+        const newsItem = newsIndex.find((news) => news.id === id);
+        if (newsItem) {
+            res.send({ id, title: newsItem.title, content });
+        } else {
+            res.status(404).send("Новость не найдена в индексе");
+        }
+    } else {
+        res.status(404).send("Новость не найдена");
+    }
+});
+
+
+
+app.put("/news/:id", (req, res) => {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const filePath = path.join(markdownFolder, `${id}.md`);
+    const indexPath = path.join(markdownFolder, "news-index.json");
+
+    if (fs.existsSync(filePath)) {
+        fs.writeFile(filePath, content, (err) => {
+            if (err) {
+                console.error("Ошибка при обновлении файла:", err);
+                return res.status(500).send("Ошибка при обновлении новости");
+            }
+
+            // Обновляем индекс
+            let newsIndex = [];
+            if (fs.existsSync(indexPath)) {
+                newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+            }
+
+            const index = newsIndex.findIndex((news) => news.id === id);
+            if (index !== -1) {
+                newsIndex[index].title = title; // Обновляем заголовок
+            }
+
+            fs.writeFile(indexPath, JSON.stringify(newsIndex, null, 2), (err) => {
+                if (err) {
+                    console.error("Ошибка при обновлении индекса:", err);
+                    return res.status(500).send("Ошибка при обновлении индекса");
+                }
+
+                res.send({ message: "Новость успешно обновлена" });
+            });
+        });
+    } else {
+        res.status(404).send("Новость не найдена");
+    }
+});
+
+const validRoles = ['user', 'student', 'teacher', 'admin']; // Список допустимых ролей
+
+app.post(
+    '/register',
+    [
+        body('username').isLength({ min: 3 }).withMessage('Имя пользователя должно быть не менее 3 символов'),
+        body('password').isLength({ min: 6 }).withMessage('Пароль должен быть не менее 6 символов'),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+
+        const users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
+
+        // Проверяем существование пользователя
+        const existingUser = users.find((user) => user.username === username);
+        if (existingUser) {
+            return res.status(400).send('Пользователь с таким именем уже существует');
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = {
+            id: Date.now().toString(),
+            username,
+            password: hashedPassword,
+            role: 'user', // Роль по умолчанию
+        };
+
+        users.push(newUser);
+
+        fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+
+        res.send('Пользователь успешно зарегистрирован');
+    }
+);
+
+
+// Маршрут для логина
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    const users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
+    const user = users.find((u) => u.username === username);
+
+    if (!user) {
+        return res.status(401).send('Неверное имя пользователя или пароль');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        return res.status(401).send('Неверное имя пользователя или пароль');
+    }
+
+    // Генерация JWT
+    const token = jwt.sign(
+        { id: user.id, role: user.role }, // Добавляем роль в токен
+        SECRET_KEY,
+        { expiresIn: '1h' }
+    );
+
+    // Возвращаем токен, роль и имя пользователя
+    res.json({ token, role: user.role, username: user.username });
+});
+
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
+});

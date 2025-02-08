@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cbce3130-25b5-488e-ac26-4b3607cd5d6e" name="Changes" comment="">
+      <changelist_data name="Phaum" email="" automatic="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server.js.undefined" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/adminTools.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/announcements.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/groups.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/materials.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/middleware.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/news.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/registration.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/server.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/users.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/DownloadFile.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/MarkdownRenderer.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/MarkdownRenderer.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/Menu.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/Menu.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/AdminPanel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/CreateUserForm.jsx.undefined" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/css/Announcements.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/css/AnnouncementsDetail.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/css/CreateAnnouncements.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/css/EditAnnouncements.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/Announcements.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/AnnouncementsDetail.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/CreateAnnouncements.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/EditAnnouncements.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Authorization/Registration.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Contacts/Contacts.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Files/Files.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/css/CreateMaterials.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/css/EditMaterials.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/css/Materials.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/css/MaterialsDetail.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/ArticleDetail.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/CreateMaterials.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/EditArticles.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/EditMaterials.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/Materials.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/MaterialsDetail.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/css/CreateNews.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/css/EditNews.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/css/News.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/css/NewsDetail.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/jsx/CreateNews.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/jsx/EditNews.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/jsx/News.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/News/jsx/NewsDetail.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/Profile/Profile.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Phaum" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2s4rHZB4xRQZmub1ez5rFTvyEjA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/react/Olymp/server&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2024.3.2.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\react\Olymp\server" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\react\Olymp\server" />
+      <recent name="D:\react\Olymp\src\UI" />
+      <recent name="D:\react\Olymp\src\pages\News\jsx" />
+      <recent name="D:\react\Olymp\src\pages\News\css" />
+      <recent name="D:\react\Olymp\src\pages\Profile" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-WS-243.23654.157" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cbce3130-25b5-488e-ac26-4b3607cd5d6e" name="Changes" comment="" />
+      <created>1737725600200</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1737725600200</updated>
+      <workItem from="1737725601244" duration="183583000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
