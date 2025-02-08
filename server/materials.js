@@ -4,9 +4,9 @@ const materialsRouter = express.Router();
 const fs = require("fs");
 const path = require("path");
 const { authenticateToken, authorizeRole } = require("./middleware");
-const markdownFolder = "./markdown-files-materials";
-const uploadFolder = "./uploads-materials";
-materialsRouter.use("/uploads-materials", express.static(path.join(__dirname, "uploads-materials")));
+const markdownFolder = path.join(__dirname, "markdown-files-materials");
+const uploadFolder = path.join(__dirname, "uploads-materials")
+materialsRouter.use("/uploads-materials", express.static(uploadFolder));
 
 if (!fs.existsSync(markdownFolder)) {
     fs.mkdirSync(markdownFolder);

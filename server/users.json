@@ -1,30 +1,9 @@
 [
   {
-    "id": "1737913681176",
-    "username": "kirill",
-    "password": "$2b$10$LgmGD849OMTW/Fgis8aDqujuMhEZHsrb8gHlydGMfEYNk/sQwEs.a",
+    "id": "1739048245134",
+    "username": "admin1",
+    "password": "$2b$10$MJrfAUfXdVddpxtkO2YbNOHJuG/E91TjLzLbYGMiLn3wu5z8h8.HC",
     "role": "admin",
-    "group": "ISTARK"
-  },
-  {
-    "id": "1737916439882",
-    "username": "qwert1",
-    "password": "$2b$10$JnkAh8qvBdIHv9xaMfDwceGTMShYgEen.rJWwcJoBsW8/4pzLW6b2",
-    "role": "teacher",
-    "group": "none"
-  },
-  {
-    "id": "762d7eb2-d2ea-45e8-a4e4-66113e15028b",
-    "username": "qwert2",
-    "password": "$2b$10$rGjka7YY0lngdTQLshx4Du2Fkx10fj3NgrtfbDH4Z1lO7zO5g1Tyu",
-    "role": "student",
-    "group": "dfg"
-  },
-  {
-    "id": "588089cf-0e59-4507-a1be-1ccae9802b97",
-    "username": "qwert3",
-    "password": "$2b$10$/eDvLgty0Al.L464yBl.NOkVvmZJaZm9CvVs84Z4DT6qrHk/3DqbO",
-    "role": "user",
     "group": "none"
   }
 ]

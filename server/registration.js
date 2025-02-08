@@ -5,7 +5,7 @@ const fs = require("fs");
 const { body, validationResult } = require("express-validator");
 const path = require("path");
 const SECRET_KEY = "your_secret_key";
-const usersFile = "./users.json";
+const usersFile = path.join(__dirname, "users.json");
 
 if (!fs.existsSync(usersFile)) {
     fs.writeFileSync(usersFile, JSON.stringify([]));
@@ -28,6 +28,8 @@ registrationRouter.post(
         const { username, password } = req.body;
         try {
             const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
+            console.log(users);
+            
             // Проверяем существование пользователя
             const existingUser = users.find((user) => user.username === username);
             if (existingUser) {
@@ -83,9 +85,12 @@ registrationRouter.post("/verify", (req, res) => {
             return res.status(403).send("Недействительный токен");
         }
         // Читаем пользователей из файла
-        const usersFile = path.join(__dirname, "users.json");
+
+        
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === decoded.id);
+        if (!user) return res.status(404).send('ХУЙ')
+
         res.json({ username: user.username, role: user.role, group: user.group }); // Возвращаем данные из токена
     });
 });
