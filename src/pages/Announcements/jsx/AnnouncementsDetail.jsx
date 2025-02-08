@@ -9,7 +9,6 @@ const AnnouncementsDetail = () => {
     const [announcements, setAnnouncements] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [role, setRole] = useState("guest");
     const navigate = useNavigate(); // Хук для навигации
 
     // Функция для получения токена
@@ -36,7 +35,7 @@ const AnnouncementsDetail = () => {
                 const data = await response.json();
                 if (token) {
                     const storedRole = localStorage.getItem("role");
-                    setRole(storedRole || "guest");
+                    // setRole(storedRole || "guest");
                 }
                 setAnnouncements(data); // Сохраняем данные о новости
                 // console.log("Пришедшие данные новости:", data); // Логируем ответ

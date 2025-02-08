@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate  } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/NewsDetail.css";
+import { getToken } from "../../../shared/constants";
 
 
 const NewsDetail = () => {
@@ -12,9 +13,6 @@ const NewsDetail = () => {
     const [error, setError] = useState(null);
     const [role, setRole] = useState("guest");
     const navigate = useNavigate(); // Хук для навигации
-
-    // Функция для получения токена
-    const getToken = () => localStorage.getItem("token");
 
     useEffect(() => {
         // Функция для загрузки данных о конкретной новости

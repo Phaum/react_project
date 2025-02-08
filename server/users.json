@@ -3,7 +3,7 @@
     "id": "1739048245134",
     "username": "admin1",
     "password": "$2b$10$MJrfAUfXdVddpxtkO2YbNOHJuG/E91TjLzLbYGMiLn3wu5z8h8.HC",
-    "role": "admin",
-    "group": "none"
+    "role": "student",
+    "group": "ISTARK"
   }
 ]

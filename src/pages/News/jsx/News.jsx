@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/News.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import { baseBackendUrl, getToken } from "../../../shared/constants";
+
+
 
 const News = () => {
     const [newsList, setNewsList] = useState([]); // Список новостей
@@ -9,13 +12,12 @@ const News = () => {
     const [loading, setLoading] = useState(true); // Состояние загрузки
     const [error, setError] = useState(null); // Ошибки при загрузке новостей
     const navigate = useNavigate(); // Для перенаправления после сохранения
-    // Функция для получения токена
-    const getToken = () => localStorage.getItem("token");
+
     // Функция для загрузки новостей
     const fetchNews = async () => {
         const token = getToken();
         const endpoint = token
-            ? "http://localhost:5000/news/read"
+            ? `${baseBackendUrl}/news/read`
             : "http://localhost:5000/news/read_guest";
         try {
             const response = await fetch(endpoint, {
@@ -80,7 +82,7 @@ const News = () => {
     if (error) {
         return <p>{error}</p>;
     }
-
+    
     return (
         <div className="main-container">
             <h1>Новости</h1>

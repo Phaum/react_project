@@ -55,11 +55,18 @@ const Profile = () => {
         return <p>Загрузка...</p>;
     }
 
+    const roles = {
+        "admin": "Администратор",
+        "teacher": "Преподаватель",
+        "student": "Студент",
+    }
+
+
     return (
         <div style={{ maxWidth: '400px', margin: '0 auto', textAlign: 'center' }}>
             <h1>Профиль</h1>
             <p>Добро пожаловать {username}</p>
-            <p>Ваша роль: {role === 'admin' ? 'Администратор' : role === 'teacher' ? 'Преподаватель' : role === 'student' ? 'Студент' : 'Гость'}.</p>
+            <p>Ваша роль: {roles[role] || "Студент"}.</p>
             <p>Ваша группа: {group}</p>
             {role === 'admin' && (
                 <div>
