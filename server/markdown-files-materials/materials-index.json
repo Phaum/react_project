@@ -4,10 +4,7 @@
     "title": "# С++",
     "content": "Курс по С++",
     "audience": [
-      "guest",
-      "student",
-      "teacher",
-      "admin"
+      "guest"
     ],
     "group": [
       "ISTARK"

@@ -34,8 +34,6 @@ const AuthPage = () => {
                 console.log("Ошибка подтверждения токена");
                 // Если токен недействителен, очищаем localStorage
                 localStorage.removeItem('token');
-                localStorage.removeItem('role');
-                localStorage.removeItem('username');
             }
         } catch (err) {
             console.error("Ошибка проверки токена:", err);
@@ -64,9 +62,9 @@ const AuthPage = () => {
                 } else {
                     // Сохраняем токен
                     localStorage.setItem("token", data.token);
-                    localStorage.setItem("role", data.role);
-                    localStorage.setItem("username", data.username);
-                    alert(`Добро пожаловать, ${data.username}!`);
+                    // localStorage.setItem("role", data.role);
+                    // localStorage.setItem("username", data.username);
+                    // alert(`Добро пожаловать, ${data.username}!`);
                     navigate("/profile");
                 }
             } else {

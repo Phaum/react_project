@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate  } from "react-router-dom";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
-import DownloadFile from "../../../UI/DownloadFile";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/AnnouncementsDetail.css";
 
 const AnnouncementsDetail = () => {
@@ -39,7 +39,7 @@ const AnnouncementsDetail = () => {
                     setRole(storedRole || "guest");
                 }
                 setAnnouncements(data); // Сохраняем данные о новости
-                console.log("Пришедшие данные новости:", data); // 🔍 Логируем ответ
+                // console.log("Пришедшие данные новости:", data); // Логируем ответ
             } catch (error) {
                 console.error("Ошибка при загрузке новости:", error);
                 setError(error.message);
@@ -110,7 +110,7 @@ const AnnouncementsDetail = () => {
                 </div>
                 <div className="fixed-buttons-container">
                     <Link to="/announcements" className="back-link">Назад к объявлениям</Link>
-                    {(role === "teacher" || role === "admin") && (
+                    {announcements && announcements.canEdit && (
                         <>
                             <Link to={`/announcements/edit/${announcements.id}`} className="edit-button">
                                 Редактировать
@@ -119,7 +119,7 @@ const AnnouncementsDetail = () => {
                                 onClick={() => deleteAnnouncements(announcements.id)}
                                 className="delete-button"
                             >
-                                Удалить объявление
+                                Удалить новость
                             </button>
                         </>
                     )}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams,Link, useNavigate } from "react-router-dom";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
-import DownloadFile from "../../../UI/DownloadFile";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import DownloadFile from "../../../UI/jsx/DownloadFile";
 
 const EditMaterials = () => {
     const { id } = useParams(); // Получаем ID новости из URL
@@ -22,9 +22,17 @@ const EditMaterials = () => {
 
     // Загружаем данные новости для редактирования
     useEffect(() => {
+        const getToken = () => localStorage.getItem("token");
         const fetchMaterials = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}`);
+                const token = getToken();
+                const response = await fetch(`http://localhost:5000/materials/${id}`,{
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            ...(token && {Authorization: `Bearer ${token}`}),
+                        },
+                    });
                 if (!response.ok) {
                     throw new Error("Не удалось загрузить данные новости");
                 }

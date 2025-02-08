@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/News.css";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 
 const News = () => {
     const [newsList, setNewsList] = useState([]); // Список новостей
-    const [role, setRole] = useState("guest"); // Роль текущего пользователя (по умолчанию - гость)
+    // const [role, setRole] = useState("guest"); // Роль текущего пользователя (по умолчанию - гость)
     const [loading, setLoading] = useState(true); // Состояние загрузки
     const [error, setError] = useState(null); // Ошибки при загрузке новостей
     const navigate = useNavigate(); // Для перенаправления после сохранения
@@ -28,10 +28,10 @@ const News = () => {
             if (response.ok) {
                 const data = await response.json();
                 setNewsList(data);
-                if (token) {
-                    const storedRole = localStorage.getItem("role");
-                    setRole(storedRole || "guest");
-                }
+                // if (token) {
+                //     const storedRole = localStorage.getItem("role");
+                //     // setRole(storedRole || "guest");
+                // }
             } else {
                 const errorMessage = await response.text();
                 setError(`Ошибка при загрузке новостей: ${errorMessage}`);
@@ -84,7 +84,7 @@ const News = () => {
     return (
         <div className="main-container">
             <h1>Новости</h1>
-            {(role === "teacher" || role === "admin") && (
+            {newsList.some((news) => news.canEdit) && (
                 <div className="news-container">
                     <Link to="/create_news" className="create-news-button">
                         Создать новость
@@ -93,15 +93,13 @@ const News = () => {
             )}
             {newsList.length > 0 ? (
                 newsList.map((news) => (
-                    <div className="news-container" key={news.id}>
+                    <div key={news.id} className="news-container">
                         <div className="text-block">
-                            <h2>
-                                <Link to={`/news/${news.id}`} className="view-news-button">
-                                    <MarkdownRenderer content={news.title}/>
-                                </Link>
-                            </h2>
+                            <Link to={`/news/${news.id}`}>
+                                <MarkdownRenderer content={news.title}/>
+                            </Link>
                         </div>
-                        {(role === "teacher" || role === "admin") && (
+                        {news.canEdit && (
                             <div className="text-block">
                                 <h2>
                                     <Link to={`/news/edit/${news.id}`} className="edit-button">

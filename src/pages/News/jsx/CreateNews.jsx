@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import "../css/CreateNews.css";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
-import DownloadFile from "../../../UI/DownloadFile";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import DownloadFile from "../../../UI/jsx/DownloadFile";
 
 const CreateNews = () => {
     const [title, setTitle] = useState("");
@@ -56,6 +56,7 @@ const CreateNews = () => {
                 navigate("/news");
             } else {
                 console.error("Ошибка при создании новости:", await response.text());
+                navigate("/news");
             }
         } catch (error) {
             console.error("Ошибка при создании новости:", error);

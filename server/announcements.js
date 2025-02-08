@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Эндпоинт для создания новости
+// Эндпоинт для создания объявления
 announcementsRouter.post(
     "/create_announcements",
     authenticateToken,
@@ -40,8 +40,6 @@ announcementsRouter.post(
         const { title, content, audience, groups } = req.body;
         const indexPath = path.join(markdownFolder, "announcements-index.json");
         const usersFile = path.join(__dirname, "users.json");
-        // const parsedGroups = JSON.parse(groups || "[]");
-        // Загружаем пользователя из `users.json`
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === req.user.id);
         if (!user) {
@@ -118,61 +116,125 @@ announcementsRouter.get("/:id/groups", authenticateToken, (req, res) => {
     }
 });
 
-// Эндпоинт для чтения новостей на основе роли
+// Эндпоинт для чтения новостей на основе роли и группы
+// announcementsRouter.get("/read", authenticateToken, (req, res) => {
+//     const { id } = req.user;
+//     const indexPath = path.join(markdownFolder, "announcements-index.json");
+//     const usersFile = path.join(__dirname, "users.json");
+//     if (fs.existsSync(indexPath)) {
+//         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
+//         const user = users.find((u) => u.id === id);
+//         if (!user) {
+//             return res.status(403).json({ message: "Пользователь не найден" });
+//         }
+//         const userRole = user.role; // Получаем актуальную роль
+//         const userGroup = user.group; // Получаем актуальную группу
+//         // Загружаем объявления
+//         let announcementsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+//         // Если роль admin, показываем все новости
+//         if (userRole === "admin") {
+//             // return res.send(announcementsIndex);
+//             return res.json(announcementsIndex.map((announcements) => ({ ...announcements, canEdit: true })));
+//         }
+//         // Фильтруем новости по ролям
+//         // let filteredAnnouncements = announcementsIndex.filter(
+//         //     (announcement) =>
+//         //         announcement.audience.includes(userRole) ||
+//         //         announcement.audience.includes("guest")
+//         // );
+//         // const filteredAnnouncements = announcementsIndex.map((announcement) => ({
+//         //     ...announcement,
+//         //     canEdit: userRole === "teacher" || userRole === "admin", // Разрешение редактирования
+//         // })).filter((announcement) => announcement.audience.includes(userRole) || announcement.audience.includes("guest"));
+//         // // Оставляем только новости, где `groups` пересекается с `userGroups`
+//         const userGroups = Array.isArray(userGroup) ? userGroup : [userGroup]; // Превращаем в массив
+//         // if (filteredAnnouncements.length === 0) {
+//         //     return res.json([]); // Всегда возвращаем пустой массив
+//         // }
+//         // res.send(filteredAnnouncements);
+//         const filteredAnnouncements = announcementsIndex
+//             .map((announcement) => ({
+//                 ...announcement,
+//                 canEdit: userRole === "teacher" || userRole === "admin", // Разрешение редактирования
+//             }))
+//             .filter((announcement) =>
+//                 (announcement.audience.includes(userRole) || announcement.audience.includes("guest")) &&
+//                 Array.isArray(announcement.groups) && announcement.groups.some(group => userGroups.includes(group)) // Фильтр по группам
+//             );
+//         // Если нет подходящих объявлений, возвращаем пустой массив
+//         if (filteredAnnouncements.length === 0) {
+//             return res.json([]);
+//         }
+//         res.send(filteredAnnouncements);
+//     } else {
+//         res.status(404).json({ message: "Список объявлений пуст" });
+//     }
+// });
+// Эндпоинт для чтения новостей на основе роли и группы
 announcementsRouter.get("/read", authenticateToken, (req, res) => {
-    const { id } = req.user;
+    const { id } = req.user; // ID пользователя из токена
     const indexPath = path.join(markdownFolder, "announcements-index.json");
     const usersFile = path.join(__dirname, "users.json");
-    if (fs.existsSync(indexPath)) {
+    if (!fs.existsSync(indexPath) || !fs.existsSync(usersFile)) {
+        return res.status(404).json({ message: "Файлы данных не найдены" });
+    }
+    try {
+        // Загружаем список пользователей и ищем текущего
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === id);
         if (!user) {
+            console.log("Пользователь не найден в users.json:", id);
             return res.status(403).json({ message: "Пользователь не найден" });
         }
-        const userRole = user.role; // Получаем актуальную роль
-        const userGroup = user.group; // Получаем актуальную группу
-        //const userGroups = Array.isArray(user.group) ? user.group : [user.group]; // Получаем массив групп пользователя
-
-        // Загружаем новости
+        const userRole = user.role; // Получаем роль пользователя
+        const userGroups = Array.isArray(user.group) ? user.group : [user.group]; // Преобразуем в массив
+        // Загружаем объявления
         let announcementsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-        // Если роль admin, показываем все новости
+        // Если роль admin, отправляем все объявления с правом редактирования
         if (userRole === "admin") {
-            return res.send(announcementsIndex);
+            return res.json(announcementsIndex.map((announcement) => ({ ...announcement, canEdit: true })));
         }
-        // Фильтруем новости по ролям и группам
-        let filteredAnnouncements = announcementsIndex.filter(
-            (announcement) =>
-                announcement.audience.includes(userRole) ||
-                announcement.audience.includes("guest")
-        );
-        // Оставляем только новости, где `groups` пересекается с `userGroups`
-        const userGroups = Array.isArray(userGroup) ? userGroup : [userGroup]; // Превращаем в массив
-        if (filteredAnnouncements.length === 0) {
-            return res.json([]); // ❗ Всегда возвращаем пустой массив
-        }
-        res.send(filteredAnnouncements);
-    } else {
-        res.status(404).json({ message: "Список объявлений пуст" });
+        // Фильтрация объявлений по ролям и группам
+        const filteredAnnouncements = announcementsIndex
+            .filter((announcement) => {
+                // const matchesRole = announcement.audience.includes(userRole) || announcement.audience.includes("guest");
+                const matchesRole =
+                    (userRole === "guest" && announcement.audience.includes("guest")) || // Гость видит только гостевые объявления
+                    (userRole !== "guest" && announcement.audience.includes(userRole));  // Остальные роли видят только свое
+                const matchesGroup = Array.isArray(announcement.group) && announcement.group.some((group) => userGroups.includes(group));
+                return matchesRole && matchesGroup;
+            })
+            .map((announcement) => ({
+                ...announcement,
+                canEdit: userRole === "teacher", // Только учителя могут редактировать
+            }));
+        // Возвращаем результат
+        res.json(filteredAnnouncements);
+    } catch (error) {
+        console.error("Ошибка при чтении объявлений:", error);
+        res.status(500).json({ message: "Ошибка сервера при обработке объявлений" });
     }
 });
+
+
 
 // Раздача статических файлов (если еще не добавлено)
 announcementsRouter.use("/files", express.static(uploadFolder));
 
 // Эндпоинт для чтения конкретной новости по id
-announcementsRouter.get("/:id", (req, res) => {
+announcementsRouter.get("/:id", authenticateToken, (req, res) => {
     const { id } = req.params; // Получаем ID из параметров маршрута
-    const userRole = req.role;
+    const userId = req.user.id;
     const filePath = path.join(markdownFolder, `${id}.md`); // Путь к файлу новости
     const indexPath = path.join(markdownFolder, "announcements-index.json"); // Путь к индексу новостей
+    const usersFile = path.join(__dirname, "users.json");
     try {
-        // Проверяем существование файла новости
         if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ message: "Новость не найдена" });
+            return res.status(404).json({ message: "Объявление не найдено" });
         }
-        // Читаем содержимое файла новости
         const content = fs.readFileSync(filePath, "utf-8");
-        // Проверяем существование файла индекса
+        const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
+        const user = users.find((u) => u.id === userId);
         let announcementsIndex = [];
         if (fs.existsSync(indexPath)) {
             try {
@@ -187,6 +249,8 @@ announcementsRouter.get("/:id", (req, res) => {
         if (!announcementsItem) {
             return res.status(404).json({ message: "Новость не найдена в индексе" });
         }
+        // Определяем, может ли пользователь редактировать/удалять
+        const canEdit = user.role === "teacher" || user.role === "admin";
         // Добавляем ссылку на изображение, если есть
         const imageUrl = announcementsItem.image ? `http://localhost:5000/announcements/test-image/${path.basename(announcementsItem.image)}` : null;
         // Добавляем ссылки на файлы, если они есть
@@ -200,11 +264,8 @@ announcementsRouter.get("/:id", (req, res) => {
             content,
             image: imageUrl, // Ссылка на изображение
             files: filesUrl, // Массив файлов с именами и ссылками
+            canEdit,
         };
-        // Если пользователь НЕ user и НЕ student, добавляем поле audience
-        if (userRole !== "user" && userRole !== "student") {
-            responseData.audience = announcementsItem.audience || [];
-        }
         res.status(200).json(responseData);
     } catch (err) {
         console.error("Ошибка обработки запроса:", err);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Materials.css";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 
 const Materials = () => {
     const [materialsList, setMaterialsList] = useState([]); // Список новостей
@@ -30,10 +30,10 @@ const Materials = () => {
             if (response.ok) {
                 const data = await response.json();
                 setMaterialsList(data);
-                if (token) {
-                    const storedRole = localStorage.getItem("role");
-                    setRole(storedRole || "guest");
-                }
+                // if (token) {
+                //     const storedRole = localStorage.getItem("role");
+                //     setRole(storedRole || "guest");
+                // }
             } else {
                 const errorMessage = await response.text();
                 setError(`Ошибка при загрузке материалов: ${errorMessage}`);
@@ -102,7 +102,7 @@ const Materials = () => {
                                 </Link>
                             </h2>
                         </div>
-                        {(role === "teacher" || role === "admin") && (
+                        {materials.canEdit && (
                             <div className="text-block">
                                 <h2>
                                     <Link to={`/materials/edit/${materials.id}`} className="edit-button">
@@ -113,10 +113,10 @@ const Materials = () => {
                                     onClick={() => deleteMaterials(materials.id)}
                                     className="delete-button"
                                 >
-                                    Удалить материал
+                                    Удалить новость
                                 </button>
                             </div>
-                         )}
+                        )}
                     </div>
                 ))
             ) : (

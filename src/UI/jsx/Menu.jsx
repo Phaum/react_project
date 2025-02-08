@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "./Menu.css";
+import "../css/Menu.css";
 
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(false); // Состояние для меню
@@ -27,20 +27,20 @@ const Menu = () => {
             </ul>
 
             {/* Кнопка для мобильного меню */}
-            <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>
-                ☰
-            </button>
+            {/*<button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>*/}
+            {/*    ☰*/}
+            {/*</button>*/}
 
-            {/* Выпадающее меню для скрытых пунктов */}
-            {isOpen && (
-                <div className="dropdown-menu">
-                    {menuItems.map((item) => (
-                        <Link key={item.id} to={item.link} className="dropdown-item" onClick={() => setIsOpen(false)}>
-                            {item.name}
-                        </Link>
-                    ))}
-                </div>
-            )}
+            {/*/!* Выпадающее меню для скрытых пунктов *!/*/}
+            {/*{isOpen && (*/}
+            {/*    <div className="dropdown-menu">*/}
+            {/*        {menuItems.map((item) => (*/}
+            {/*            <Link key={item.id} to={item.link} className="dropdown-item" onClick={() => setIsOpen(false)}>*/}
+            {/*                {item.name}*/}
+            {/*            </Link>*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </nav>
     );
 };

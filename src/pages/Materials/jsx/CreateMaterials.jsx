@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import "../css/CreateMaterials.css";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 
 const CreateMaterials = () => {
     const [title, setTitle] = useState("");

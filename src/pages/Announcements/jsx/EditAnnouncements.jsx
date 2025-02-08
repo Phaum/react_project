@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
-import DownloadFile from "../../../UI/DownloadFile";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import DownloadFile from "../../../UI/jsx/DownloadFile";
 
 const EditAnnouncements = () => {
     const { id } = useParams(); // Получаем ID новости из URL
@@ -20,9 +20,17 @@ const EditAnnouncements = () => {
 
     // Загружаем данные новости для редактирования
     useEffect(() => {
+        const getToken = () => localStorage.getItem("token");
         const fetchAnnouncements = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/announcements/${id}`);
+                const token = getToken();
+                const response = await fetch(`http://localhost:5000/announcements/${id}`,{
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token && {Authorization: `Bearer ${token}`}),
+                    },
+                });
                 if (!response.ok) {
                     throw new Error("Не удалось загрузить данные новости");
                 }
@@ -36,6 +44,7 @@ const EditAnnouncements = () => {
             } catch (error) {
                 console.error("Ошибка при загрузке новости:", error);
                 setError("Ошибка при загрузке данных");
+                navigate("/announcements");
             }
         };
         const fetchGroups = async () => {

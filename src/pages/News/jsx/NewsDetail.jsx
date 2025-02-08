@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate  } from "react-router-dom";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
-import DownloadFile from "../../../UI/DownloadFile";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/NewsDetail.css";
 
 
@@ -40,7 +40,7 @@ const NewsDetail = () => {
                     setRole(storedRole || "guest");
                 }
                 setNews(data); // Сохраняем данные о новости
-                console.log("Пришедшие данные новости:", data); // 🔍 Логируем ответ
+                // console.log("Пришедшие данные новости:", data); // 🔍 Логируем ответ
             } catch (error) {
                 console.error("Ошибка при загрузке новости:", error);
                 setError(error.message);
@@ -110,7 +110,7 @@ const NewsDetail = () => {
                 </div>
                 <div className="fixed-buttons-container">
                     <Link to="/news" className="back-link">Назад к новостям</Link>
-                    {(role === "teacher" || role === "admin") && (
+                    {news && news.canEdit && (
                         <>
                             <Link to={`/news/edit/${news.id}`} className="edit-button">
                                 Редактировать

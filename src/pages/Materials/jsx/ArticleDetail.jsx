@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {Link, useParams, useNavigate } from "react-router-dom";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
-import DownloadFile from "../../../UI/DownloadFile";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import DownloadFile from "../../../UI/jsx/DownloadFile";
 
 const ArticleDetail = () => {
     const { id, articleId } = useParams(); // Получаем ID материала и статьи

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Menu from "./UI/Menu";
+import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
+import Menu from "./UI/jsx/Menu";
 import "./App.css"
 
 // Новости
@@ -34,10 +34,34 @@ import Profile from "./pages/Profile/Profile";
 import Registration from "./pages/Authorization/Registration";
 import AdminPanel from "./pages/AdminPanel/jsx/AdminPanel"
 
+const menuItems = [
+    { id: 1, name: "Новости", link: "/news" },
+    { id: 2, name: "Объявления", link: "/announcements" },
+    { id: 3, name: "Материалы", link: "/materials" },
+    { id: 4, name: "Контакты", link: "/contacts" },
+    { id: 5, name: "Таблица рейтинга", link: "/rating_table"},
+    { id: 6, name: "Профиль", link: "/profile" }
+];
+
 const App = () => {
+    const [isOpen, setIsOpen] = useState(false);
     return (
         <Router>
             <div className="layout">
+                <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>
+                    ☰
+                </button>
+
+                {/* Выпадающее меню для скрытых пунктов */}
+                {isOpen && (
+                    <div className="dropdown-menu">
+                        {menuItems.map((item) => (
+                            <Link key={item.id} to={item.link} className="dropdown-item" onClick={() => setIsOpen(false)}>
+                                {item.name}
+                            </Link>
+                        ))}
+                    </div>
+                )}
                 <div className="sidebar">
                     <Menu />
                 </div>

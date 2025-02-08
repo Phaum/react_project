@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Announcements.css";
-import MarkdownRenderer from "../../../UI/MarkdownRenderer";
+import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 
 const Announcements = () => {
     const [announcementsList, setAnnouncementsList] = useState([]); // Список новостей
@@ -85,13 +85,13 @@ const Announcements = () => {
     return (
         <div className="main-container">
             <h1>Объявления</h1>
-            {(role === "teacher" || role === "admin") && (
-                        <div className="announcements-container">
-                            <Link to="/create_announcements" className="create-announcements-button">
-                                Создать объявление
-                            </Link>
-                        </div>
-                    )}
+            {announcementsList.some((news) => news.canEdit) && (
+                <div className="announcements-container">
+                    <Link to="/create_announcements" className="create-announcements-button">
+                        Создать объявление
+                    </Link>
+                </div>
+            )}
             {announcementsList.length > 0 ? (
                 announcementsList.map((announcements) => (
                     <div className="announcements-container" key={announcements.id}>
@@ -102,7 +102,7 @@ const Announcements = () => {
                                 </Link>
                             </div>
                         </div>
-                        {(role === "teacher" || role === "admin") && (
+                        {announcements.canEdit && (
                             <div className="text-block">
                                 <h2>
                                     <Link to={`/announcements/edit/${announcements.id}`} className="edit-button">
@@ -113,10 +113,10 @@ const Announcements = () => {
                                     onClick={() => deleteAnnouncements(announcements.id)}
                                     className="delete-button"
                                 >
-                                    Удалить объявление
+                                    Удалить новость
                                 </button>
                             </div>
-                         )}
+                        )}
                     </div>
                 ))
             ) : (

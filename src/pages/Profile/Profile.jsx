@@ -82,10 +82,10 @@ const Profile = () => {
                     </Link>
                 </div>
             )}
-            {role === 'student' && (
+            {role === 'student' && group !== 'none' && (
                 <div>
-                    <Link to="/student-content" style={{ textDecoration: 'none', color: 'blue' }}>
-                        Доступные материалы для студентов
+                    <Link to="/materials" style={{ textDecoration: 'none', color: 'blue' }}>
+                        Доступные материалы для студентов группы {group}
                     </Link>
                 </div>
             )}
