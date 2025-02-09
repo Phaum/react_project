@@ -85,13 +85,13 @@ const Materials = () => {
     return (
         <div className="main-container">
             <h1>Учебные материалы</h1>
-            {(role === "teacher" || role === "admin") && (
-                        <div className="materials-container">
-                            <Link to="/create_materials" className="create-materials-button">
-                                Создать материал
-                            </Link>
-                        </div>
-                    )}
+            {materialsList.some((materials) => materials.canEdit) && (
+                <div className="materials-container">
+                    <Link to="/create_materials" className="create-materials-button">
+                        Создать материал
+                    </Link>
+                </div>
+            )}
             {materialsList.length > 0 ? (
                 materialsList.map((materials) => (
                     <div className="materials-container" key={materials.id}>

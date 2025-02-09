@@ -16,6 +16,18 @@
     justify-content: space-between;
 }
 
+.news-container-image {
+    border: 1px solid #ddd; /* Граница */
+    border-radius: 8px; /* Закругленные углы */
+    padding: 20px; /* Внутренние отступы */
+    margin-bottom: 20px; /* Отступы между новостями */
+    background-color: #f9f9f9; /* Светлый фон */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень */
+    display: flex;
+    justify-content: space-between;
+    max-width: 150px;
+}
+
 .fixed-buttons-container {
     position: fixed;
     bottom: 0;

@@ -74,7 +74,13 @@ const EditMaterials = () => {
         };
         const fetchArticles = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles`);
+                const response = await fetch(`http://localhost:5000/materials/${id}/articles`,{
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token && {Authorization: `Bearer ${token}`}),
+                    },
+                });
                 if (!response.ok) throw new Error("Ошибка загрузки статей");
                 const data = await response.json();
                 setArticles(data);

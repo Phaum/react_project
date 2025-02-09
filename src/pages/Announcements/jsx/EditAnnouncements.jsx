@@ -191,7 +191,7 @@ const EditAnnouncements = () => {
             alert("Файл успешно удален");
             window.location.reload();
         } catch (error) {
-            console.error("❌ Ошибка удаления файла:", error);
+            console.error("Ошибка удаления файла:", error);
             alert(`Ошибка удаления файла: ${error.message}`);
         }
     };
@@ -325,7 +325,7 @@ const EditAnnouncements = () => {
                 {image && (
                     <div>
                         <p>Текущее изображение:</p>
-                        <img className="announcements-container" src={image} alt={title} width="50%"/>
+                        <img className="announcements-container-image" src={image} alt={title} width="50%"/>
                         <button className="delete-button" type="button" onClick={handleImageDelete}>
                             Удалить изображение
                         </button>

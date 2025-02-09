@@ -14,7 +14,7 @@ const AuthPage = () => {
         if (token) {
             verifyToken(token); // Проверяем токен на сервере
         }
-    }, [navigate]);
+    }, []);
 
     const verifyToken = async (token) => {
         try {

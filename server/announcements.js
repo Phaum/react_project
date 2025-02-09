@@ -4,9 +4,9 @@ const announcementsRouter = express.Router();
 const fs = require("fs");
 const path = require("path");
 const { authenticateToken, authorizeRole } = require("./middleware");
-const markdownFolder = "./markdown-files-announcements";
-const uploadFolder = "./uploads-announcements";
-announcementsRouter.use("/uploads-announcements", express.static(path.join(__dirname, "uploads-announcements")));
+const markdownFolder = path.join(__dirname, "markdown-files-announcements");
+const uploadFolder = path.join(__dirname, "uploads-announcements")
+announcementsRouter.use("/uploads-announcements", express.static(uploadFolder));
 
 if (!fs.existsSync(markdownFolder)) {
     fs.mkdirSync(markdownFolder);
@@ -172,7 +172,7 @@ announcementsRouter.get("/:id/groups", authenticateToken, (req, res) => {
 // });
 // Эндпоинт для чтения новостей на основе роли и группы
 announcementsRouter.get("/read", authenticateToken, (req, res) => {
-    const { id } = req.user; // ID пользователя из токена
+    const { id } = req.user;
     const indexPath = path.join(markdownFolder, "announcements-index.json");
     const usersFile = path.join(__dirname, "users.json");
     if (!fs.existsSync(indexPath) || !fs.existsSync(usersFile)) {
@@ -264,6 +264,7 @@ announcementsRouter.get("/:id", authenticateToken, (req, res) => {
             content,
             image: imageUrl, // Ссылка на изображение
             files: filesUrl, // Массив файлов с именами и ссылками
+            audience: announcementsItem.audience,
             canEdit,
         };
         res.status(200).json(responseData);
@@ -450,9 +451,9 @@ announcementsRouter.delete("/:id/:filename", authenticateToken, authorizeRole(["
     // Удаляем файл с сервера
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
-        console.log(`✅ Файл ${filename} успешно удален с сервера`);
+        console.log(`Файл ${filename} успешно удален с сервера`);
     } else {
-        console.warn(`⚠️ Файл ${filePath} отсутствует на сервере`);
+        console.warn(`Файл ${filePath} отсутствует на сервере`);
     }
     // Удаляем файл из массива `files`
     announcementsItem.files = announcementsItem.files.filter((file) => file !== fileToDelete);

@@ -266,7 +266,7 @@ const EditNews = () => {
                 {image && (
                     <div>
                         <h3>Текущее изображение:</h3>
-                        <img className="news-container" src={image} alt={title} width="50%"/>
+                        <img className="news-container-image" src={image} alt={title} width="50%"/>
                         <button className="delete-button" type="button" onClick={handleImageDelete}>
                             Удалить изображение
                         </button>

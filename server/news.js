@@ -4,9 +4,9 @@ const newsRouter = express.Router();
 const fs = require("fs");
 const path = require("path");
 const { authenticateToken, authorizeRole } = require("./middleware");
-const markdownFolder = "./markdown-files-news";
-const uploadFolder = "./uploads-news";
-newsRouter.use("/uploads-news", express.static(path.join(__dirname, "uploads-news")));
+const markdownFolder = path.join(__dirname, "markdown-files-news");
+const uploadFolder = path.join(__dirname, "uploads-news");
+newsRouter.use("/uploads-news", express.static(uploadFolder));
 
 if (!fs.existsSync(markdownFolder)) {
     fs.mkdirSync(markdownFolder);
@@ -264,6 +264,7 @@ newsRouter.get("/:id", authenticateToken,(req, res) => {
             content,
             image: imageUrl, // Ссылка на изображение
             files: filesUrl, // Массив файлов с именами и ссылками
+            audience: newsItem.audience,
             canEdit,
         };
         res.status(200).json(responseData);

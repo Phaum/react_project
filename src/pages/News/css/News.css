@@ -6,8 +6,7 @@ a {
 
 /* Основной стиль для контейнеров */
 .main-container {
-    border-left: 100px solid #FFFFFF;
-    border-right: 100px solid #FFFFFF;
+    justify-content: center;
 }
 .news-container {
     border: 1px solid #ddd; /* Граница */
@@ -18,6 +17,16 @@ a {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень */
     display: flex;
     justify-content: space-between;
+}
+
+@media (max-width: 720px) {
+    .news-container {
+        flex-direction: column;
+    }
+    .main-container {
+        display: grid;
+        justify-content: center;
+    }
 }
 
 .all-news-container {

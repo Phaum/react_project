@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Select, Space, Input } from "antd";
 
 const AdminPanel = () => {
     const [users, setUsers] = useState([]);
@@ -212,7 +213,6 @@ const AdminPanel = () => {
 
     if (loading) return <p>Загрузка...</p>;
     if (error) return <p>Ошибка: {error}</p>;
-
     return (
         <div>
             <h1>Администратор: управление пользователями</h1>
@@ -231,18 +231,18 @@ const AdminPanel = () => {
                     <tr key={user.id}>
                         <td>{user.id}</td>
                         <td>
-                            <input
-                                type="text"
-                                value={user.username}
-                                onChange={(e) =>
-                                    setUsers((prev) =>
-                                        prev.map((u) =>
-                                            u.id === user.id
-                                                ? { ...u, username: e.target.value }
-                                                : u
-                                        )
-                                    )
-                                }
+                            <Input placeholder="Имя пользователя"
+                                   type="text"
+                                   value={user.username}
+                                   onChange={(e) =>
+                                       setUsers((prev) =>
+                                           prev.map((u) =>
+                                               u.id === user.id
+                                                   ? { ...u, username: e.target.value }
+                                                   : u
+                                           )
+                                       )
+                                   }
                             />
                         </td>
                         <td>

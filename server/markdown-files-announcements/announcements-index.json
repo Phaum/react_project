@@ -5,9 +5,9 @@
     "content": "123",
     "audience": [
       "student",
+      "guest",
       "teacher",
-      "admin",
-      "guest"
+      "admin"
     ],
     "group": [
       "ISTARK"

@@ -13,12 +13,19 @@ const EditArticle = () => {
     const [files, setFiles] = useState([]);
     const [newFiles, setNewFiles] = useState([]);
     const [error, setError] = useState(null);
-
+    const getToken = () => localStorage.getItem("token");
     // Загрузка данных статьи
     useEffect(() => {
         const fetchArticle = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`);
+                const token = getToken();
+                const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token && { Authorization: `Bearer ${token}` }),
+                    },
+                });
                 if (!response.ok) throw new Error("Ошибка загрузки статьи");
                 const data = await response.json();
                 setTitle(data.title);

@@ -4,10 +4,13 @@
     "title": "# С++",
     "content": "Курс по С++",
     "audience": [
-      "guest"
+      "guest",
+      "student",
+      "teacher",
+      "admin"
     ],
     "group": [
-      "ISTARK"
+      "dfg"
     ],
     "image": "/uploads-materials/1738688639420_1738231205814_ISO_C++_Logo.svg.png",
     "files": [
@@ -36,6 +39,40 @@
         "id": "1738528836044",
         "title": "Часть 3",
         "content": "часть 3",
+        "audience": [],
+        "image": null,
+        "files": []
+      }
+    ]
+  },
+  {
+    "id": 1739101429693,
+    "title": "приветствие в материалах",
+    "content": "123123",
+    "audience": [
+      "admin",
+      "teacher",
+      "student",
+      "guest"
+    ],
+    "group": [
+      "none"
+    ],
+    "image": "/uploads-materials/1739101571881_razer8305_A_realistic_depiction_of_Ciri_from_Witcher_3_game_who_ccc488f6-5aa4-455c-b827-b1bb6b15ae03.png",
+    "files": [],
+    "articles": [
+      {
+        "id": "1739102086272",
+        "title": "# Проверка",
+        "content": "123123",
+        "audience": [],
+        "image": null,
+        "files": []
+      },
+      {
+        "id": "1739102185688",
+        "title": "# Проверка 2",
+        "content": "От создателей \"Проверка 1\"",
         "audience": [],
         "image": null,
         "files": []

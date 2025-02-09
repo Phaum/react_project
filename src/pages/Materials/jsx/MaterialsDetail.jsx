@@ -39,8 +39,7 @@ const MaterialsDetail = () => {
                     const storedRole = localStorage.getItem("role");
                     setRole(storedRole || "guest");
                 }
-                setMaterials(data); // Сохраняем данные о новости
-                // console.log("Пришедшие данные новости:", data); // Логируем ответ
+                setMaterials(data);
             } catch (error) {
                 console.error("Ошибка при загрузке новости:", error);
                 setError(error.message);
@@ -51,8 +50,15 @@ const MaterialsDetail = () => {
 
         // функция для отображения статей
         const fetchArticles = async () => {
+            const token = getToken();
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles`);
+                const response = await fetch(`http://localhost:5000/materials/${id}/articles`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token && { Authorization: `Bearer ${token}` }),
+                    },
+                });
                 if (!response.ok) throw new Error("Ошибка загрузки статей");
                 const data = await response.json();
                 setArticles(data);
@@ -102,12 +108,11 @@ const MaterialsDetail = () => {
             <div>
                 <MarkdownRenderer content={materials.title}/>
                 {materials.image ? (
-                    <img className="materials-container" src={materials.image} alt={materials.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
+                    <img className="materials-container-image" src={materials.image} alt={materials.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
                 ) : null}
                 <div className="detail-container">
                     <MarkdownRenderer content={materials.content} />
                 </div>
-
                 <div>
                     {articles.length > 0 ? (
                         <div >

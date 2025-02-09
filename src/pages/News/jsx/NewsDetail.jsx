@@ -89,7 +89,7 @@ const NewsDetail = () => {
             <div>
                 <div><MarkdownRenderer content={news.title}/></div>
                 {news.image ? (
-                    <img className="news-container" src={news.image} alt={news.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
+                    <img className="news-container-image" src={news.image} alt={news.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
                 ) : null}
                 <div className="detail-container">
                     <MarkdownRenderer content={news.content} />

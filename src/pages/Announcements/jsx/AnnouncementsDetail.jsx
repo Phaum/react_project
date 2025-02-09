@@ -9,7 +9,7 @@ const AnnouncementsDetail = () => {
     const [announcements, setAnnouncements] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [role, setRole] = useState("guest");
+    // const [role, setRole] = useState("guest");
     const navigate = useNavigate(); // Хук для навигации
 
     // Функция для получения токена
@@ -36,7 +36,7 @@ const AnnouncementsDetail = () => {
                 const data = await response.json();
                 if (token) {
                     const storedRole = localStorage.getItem("role");
-                    setRole(storedRole || "guest");
+                    // setRole(storedRole || "guest");
                 }
                 setAnnouncements(data); // Сохраняем данные о новости
                 // console.log("Пришедшие данные новости:", data); // Логируем ответ
@@ -89,7 +89,7 @@ const AnnouncementsDetail = () => {
             <div>
                 <MarkdownRenderer content={announcements.title}/>
                 {announcements.image ? (
-                    <img className="announcements-container" src={announcements.image} alt={announcements.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
+                    <img className="announcements-container-image" src={announcements.image} alt={announcements.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
                 ) : null}
                 <div className="detail-container">
                     <MarkdownRenderer content={announcements.content} />

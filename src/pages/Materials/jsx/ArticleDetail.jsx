@@ -17,14 +17,11 @@ const ArticleDetail = () => {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+                    method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!response.ok) throw new Error("Ошибка загрузки статьи");
                 const data = await response.json();
-                if (token) {
-                    const storedRole = localStorage.getItem("role");
-                    setRole(storedRole || "guest");
-                }
                 setArticle(data);
             } catch (error) {
                 console.error(error);
@@ -64,7 +61,7 @@ const ArticleDetail = () => {
             <div>
                 <MarkdownRenderer content={article.title}/>
                 {article.image ? (
-                    <img className="news-container" src={article.image} alt={article.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
+                    <img className="materials-container-image" src={article.image} alt={article.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
                 ) : null}
                 <div className="detail-container">
                     <MarkdownRenderer content={article.content} />
@@ -85,7 +82,7 @@ const ArticleDetail = () => {
                 </div>
                 <div className="fixed-buttons-container">
                     <Link to={`/materials/${id}`} className="back-link">Назад к материалу</Link>
-                    {(role === "teacher" || role === "admin") && (
+                    {article && article.canEdit && (
                         <>
                             <Link to={`/materials/${id}/articles/${article.id}/edit`} className="edit-button">
                                 Редактировать

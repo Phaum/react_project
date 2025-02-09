@@ -7,6 +7,7 @@ const adminRouter = require("./adminTools");
 const newsRouter = require("./news");
 const announcementsRouter = require("./announcements");
 const materialsRouter = require("./materials");
+const rankingRouter = require("./ranking");
 
 const app = express();
 const PORT = process.env.PORT || 5000; // Позволяет использовать переменные окружения для порта
@@ -21,6 +22,7 @@ app.use("/admin-tools", adminRouter); // Роутер для панели адм
 app.use("/news", newsRouter); // Роутер для новостей
 app.use("/announcements", announcementsRouter); // Роутер для обьявлений
 app.use("/materials", materialsRouter); // Роутер для материалов
+app.use("/ranking", rankingRouter);
 
 // Обработка ошибок
 app.use((err, req, res, next) => {
