@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import {Link, useParams, useNavigate } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
+import { Card, Typography, List, Button, Space } from "antd";
+import { EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined } from "@ant-design/icons";
+const { Title, Paragraph } = Typography;
 
 const ArticleDetail = () => {
-    const { id, articleId } = useParams(); // Получаем ID материала и статьи
+    const { id, articleId } = useParams();
     const [article, setArticle] = useState(null);
     const [role, setRole] = useState("guest");
     const [articles, setArticles] = useState([]);
-    // const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -30,7 +32,6 @@ const ArticleDetail = () => {
         fetchArticle();
     }, [id, articleId]);
 
-    // Функция для удаления статьи
     const deleteArticle = async (e, articleId) => {
         e.preventDefault();
         try {
@@ -41,7 +42,7 @@ const ArticleDetail = () => {
             });
             if (response.ok) {
                 setArticles(articles.filter((article) => article.id !== articleId));
-                navigate(`/materials/edit/${id}`); // Перенаправляем назад к материалам
+                navigate(`/materials/edit/${id}`);
             } else {
                 alert("Ошибка при удалении статьи");
             }
@@ -50,54 +51,55 @@ const ArticleDetail = () => {
         }
     };
 
-    // Если ошибка, выводим сообщение
     if (error) return <p>Ошибка: {error}</p>;
 
-    // Если article === null, выводим заглушку
     if (!article) return <p>Статья не найдена</p>;
 
     return (
-        <div className="main-container">
-            <div>
-                <MarkdownRenderer content={article.title}/>
-                {article.image ? (
-                    <img className="materials-container-image" src={article.image} alt={article.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
-                ) : null}
-                <div className="detail-container">
-                    <MarkdownRenderer content={article.content} />
-                </div>
-                <div>
-                    {article.files && article.files.length > 0 && (
-                        <div className="detail-container">
-                            <h3>Прикрепленные файлы:</h3>
-                            <ul>
-                                {article.files.map((file, index) => (
-                                    <div key={index}>
-                                        <DownloadFile file={file} />
-                                    </div>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
-                <div className="fixed-buttons-container">
-                    <Link to={`/materials/${id}`} className="back-link">Назад к материалу</Link>
-                    {article && article.canEdit && (
-                        <>
-                            <Link to={`/materials/${id}/articles/${article.id}/edit`} className="edit-button">
-                                Редактировать
-                            </Link>
-                            <button
-                                onClick={(e) => deleteArticle(e,article.id)}
-                                className="delete-button"
-                            >
-                                Удалить новость
-                            </button>
-                        </>
-                    )}
-                </div>
-            </div>
-        </div>
+        <Card title={<Title level={3}>{<MarkdownRenderer content={article.title}/>}</Title>} style={{ maxWidth: 800, margin: "auto" }}>
+            {article.image && (
+                <img
+                    src={article.image}
+                    alt={article.title}
+                    style={{ width: "100%", maxHeight: 300, objectFit: "cover", marginBottom: 16 }}
+                    onError={(e) => e.target.style.display = "none"}
+                />
+            )}
+            <Paragraph><MarkdownRenderer content={article.content} /></Paragraph>
+            {article.files && article.files.length > 0 && (
+                <Card title="Прикрепленные файлы" style={{ marginTop: 16 }}>
+                    <List
+                        dataSource={article.files}
+                        renderItem={(file, index) => (
+                            <List.Item key={index}>
+                                <FileOutlined style={{ marginRight: 8 }} />
+                                <DownloadFile file={file} />
+                            </List.Item>
+                        )}
+                    />
+                </Card>
+            )}
+            <Space style={{ marginTop: 16 }}>
+                <Button icon={<ArrowLeftOutlined />} type="default">
+                    <Link to={`/materials/${id}`}>Назад</Link>
+                </Button>
+                {article.canEdit && (
+                    <>
+                        <Button icon={<EditOutlined />} type="primary">
+                            <Link to={`/materials/${id}/articles/${article.id}/edit`}>Редактировать</Link>
+                        </Button>
+
+                        <Button
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={() => deleteArticle(article.id)}
+                        >
+                            Удалить
+                        </Button>
+                    </>
+                )}
+            </Space>
+        </Card>
     );
 };
 

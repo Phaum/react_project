@@ -3,21 +3,20 @@ import { useParams, Link, useNavigate  } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/NewsDetail.css";
-
+import { Card, Typography, Button, Space, Image, List } from "antd";
+import {DownloadOutlined, EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined} from "@ant-design/icons";
+const { Title, Paragraph } = Typography;
 
 const NewsDetail = () => {
-    const { id } = useParams(); // Получаем ID из параметров маршрута
+    const { id } = useParams();
     const [news, setNews] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [role, setRole] = useState("guest");
-    const navigate = useNavigate(); // Хук для навигации
-
-    // Функция для получения токена
+    const navigate = useNavigate();
     const getToken = () => localStorage.getItem("token");
 
     useEffect(() => {
-        // Функция для загрузки данных о конкретной новости
         const fetchNewsDetail = async () => {
             const token = getToken();
             const endpoint = token
@@ -39,8 +38,7 @@ const NewsDetail = () => {
                     const storedRole = localStorage.getItem("role");
                     setRole(storedRole || "guest");
                 }
-                setNews(data); // Сохраняем данные о новости
-                // console.log("Пришедшие данные новости:", data); // 🔍 Логируем ответ
+                setNews(data);
             } catch (error) {
                 console.error("Ошибка при загрузке новости:", error);
                 setError(error.message);
@@ -85,47 +83,50 @@ const NewsDetail = () => {
     }
 
     return (
-        <div className="main-container">
-            <div>
-                <div><MarkdownRenderer content={news.title}/></div>
-                {news.image ? (
-                    <img className="news-container-image" src={news.image} alt={news.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
-                ) : null}
-                <div className="detail-container">
-                    <MarkdownRenderer content={news.content} />
-                </div>
-                <div>
-                    {news.files && news.files.length > 0 && (
-                        <div className="attached-files">
-                            <h3>Прикрепленные файлы:</h3>
-                            <ul>
-                                {news.files.map((file, index) => (
-                                    <div key={index}>
-                                        <DownloadFile file={file} />
-                                    </div>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
-                <div className="fixed-buttons-container">
-                    <Link to="/news" className="back-link">Назад к новостям</Link>
-                    {news && news.canEdit && (
-                        <>
-                            <Link to={`/news/edit/${news.id}`} className="edit-button">
-                                Редактировать
-                            </Link>
-                            <button
-                                onClick={() => deleteNews(news.id)}
-                                className="delete-button"
-                            >
-                                Удалить новость
-                            </button>
-                        </>
-                    )}
-                </div>
-            </div>
-        </div>
+        <Card title={<Title level={3}>{<MarkdownRenderer content={news.title}/>}</Title>} style={{ maxWidth: 800, margin: "auto" }}>
+            {news.image && (
+                <img
+                    src={news.image}
+                    alt={news.title}
+                    style={{ width: "100%", maxHeight: 300, objectFit: "cover", marginBottom: 16 }}
+                    onError={(e) => e.target.style.display = "none"}
+                />
+            )}
+            <Paragraph><MarkdownRenderer content={news.content} /></Paragraph>
+            {news.files && news.files.length > 0 && (
+                <Card title="Прикрепленные файлы" style={{ marginTop: 16 }}>
+                    <List
+                        dataSource={news.files}
+                        renderItem={(file, index) => (
+                            <List.Item key={index}>
+                                <FileOutlined style={{ marginRight: 8 }} />
+                                <DownloadFile file={file} />
+                            </List.Item>
+                        )}
+                    />
+                </Card>
+            )}
+            <Space style={{ marginTop: 16 }}>
+                <Button icon={<ArrowLeftOutlined />} type="default">
+                    <Link to="/news">Назад</Link>
+                </Button>
+                {news.canEdit && (
+                    <>
+                        <Button icon={<EditOutlined />} type="primary">
+                            <Link to={`/news/edit/${news.id}`}>Редактировать</Link>
+                        </Button>
+
+                        <Button
+                            icon={<DeleteOutlined />}
+                            danger
+                            onClick={() => deleteNews(news.id)}
+                        >
+                            Удалить
+                        </Button>
+                    </>
+                )}
+            </Space>
+        </Card>
     );
 };
 

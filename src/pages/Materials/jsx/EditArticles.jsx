@@ -4,17 +4,17 @@ import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 
 const EditArticle = () => {
-    const { id, articleId } = useParams(); // Получаем ID материала и статьи
+    const { id, articleId } = useParams();
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [image, setImage] = useState(null); // Состояние для текущего изображения
-    const [newImage, setNewImage] = useState(null); // Состояние для нового изображения
+    const [image, setImage] = useState(null);
+    const [newImage, setNewImage] = useState(null);
     const [files, setFiles] = useState([]);
     const [newFiles, setNewFiles] = useState([]);
     const [error, setError] = useState(null);
     const getToken = () => localStorage.getItem("token");
-    // Загрузка данных статьи
+
     useEffect(() => {
         const fetchArticle = async () => {
             try {
@@ -30,8 +30,8 @@ const EditArticle = () => {
                 const data = await response.json();
                 setTitle(data.title);
                 setContent(data.content);
-                setImage(data.image); // Сохраняем URL текущего изображения
-                setFiles(data.files || []); // файлы
+                setImage(data.image);
+                setFiles(data.files || []);
             } catch (error) {
                 console.error("Ошибка при загрузке статьи", error);
                 setError(error.message);
@@ -41,7 +41,6 @@ const EditArticle = () => {
         fetchArticle();
     }, [id, articleId]);
 
-    // 📌 Обновление статьи
     const handleUpdate = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("token");
@@ -56,13 +55,12 @@ const EditArticle = () => {
             });
             if (!response.ok) throw new Error("Ошибка при обновлении статьи");
             alert("Статья успешно обновлена!");
-            navigate(`/materials/${id}/articles/${articleId}`); // Перенаправляем назад к материалам
+            navigate(`/materials/${id}/articles/${articleId}`);
         } catch (error) {
             setError(error.message);
         }
     };
 
-    // Обработка загрузки нового изображения
     const handleImageUpload = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -78,7 +76,7 @@ const EditArticle = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setImage(data.imageUrl); // Обновляем URL изображения
+                setImage(data.imageUrl);
                 alert("Изображение успешно загружено");
                 window.location.reload();
             } else {
@@ -92,7 +90,6 @@ const EditArticle = () => {
         }
     };
 
-    // Обработка удаления изображения
     const handleImageDelete = async (e) => {
         e.preventDefault();
         try {
@@ -104,7 +101,7 @@ const EditArticle = () => {
                 },
             });
             if (response.ok) {
-                setImage(null); // Удаляем изображение из состояния
+                setImage(null);
                 alert("Изображение успешно удалено");
                 window.location.reload();
             } else {
@@ -119,15 +116,14 @@ const EditArticle = () => {
     };
 
     if (error) {
-        return <p>{error}</p>; // Отображение ошибки при загрузке
+        return <p>{error}</p>;
     }
 
-    // Удаление файла
     const handleFileDelete = async (e, fileUrl) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const filename = decodeURIComponent(fileUrl.split("/").pop()); // Декодируем имя файла
+            const filename = decodeURIComponent(fileUrl.split("/").pop());
             const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}/${filename}`, {
                 method: "DELETE",
                 headers: {
@@ -138,16 +134,15 @@ const EditArticle = () => {
                 const errorMessage = await response.text();
                 throw new Error(`Ошибка при удалении файла: ${errorMessage}`);
             }
-            setFiles((prevFiles) => prevFiles.filter((file) => file.url !== fileUrl)); // Удаляем из списка
+            setFiles((prevFiles) => prevFiles.filter((file) => file.url !== fileUrl));
             alert("Файл успешно удален");
             window.location.reload();
         } catch (error) {
-            console.error("❌ Ошибка удаления файла:", error);
+            console.error("Ошибка удаления файла:", error);
             alert(`Ошибка удаления файла: ${error.message}`);
         }
     };
 
-    // загрузка дополнительных файлов
     const uploadNewFilesDop = async (e) => {
         e.preventDefault();
         if (newFiles.length === 0) {
@@ -169,8 +164,8 @@ const EditArticle = () => {
                 throw new Error("Ошибка при загрузке файлов");
             }
             const data = await response.json();
-            setFiles((prev) => [...prev, ...data.files]); // Обновляем список файлов
-            setNewFiles([]); // Очищаем выбранные файлы
+            setFiles((prev) => [...prev, ...data.files]);
+            setNewFiles([]);
             alert("Файлы успешно загружены");
             window.location.reload();
         } catch (error) {

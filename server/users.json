@@ -18,13 +18,6 @@
     "username": "qwert2",
     "password": "$2b$10$rGjka7YY0lngdTQLshx4Du2Fkx10fj3NgrtfbDH4Z1lO7zO5g1Tyu",
     "role": "student",
-    "group": "dfg"
-  },
-  {
-    "id": "588089cf-0e59-4507-a1be-1ccae9802b97",
-    "username": "qwert3",
-    "password": "$2b$10$/eDvLgty0Al.L464yBl.NOkVvmZJaZm9CvVs84Z4DT6qrHk/3DqbO",
-    "role": "user",
     "group": "none"
   }
 ]

@@ -9,9 +9,9 @@ const CreateNews = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [audience, setAudience] = useState([]);
-    const [image, setImage] = useState(null); // Состояние для фото
-    const [files, setFiles] = useState([]); // Состояние для файлов
-    const navigate = useNavigate(); // Хук для навигации
+    const [image, setImage] = useState(null);
+    const [files, setFiles] = useState([]);
+    const navigate = useNavigate();
     const handleCheckboxChange = (event) => {
         const { value, checked } = event.target;
         if (checked) {
@@ -22,18 +22,17 @@ const CreateNews = () => {
     };
 
     const handleImageChange = (event) => {
-        setImage(event.target.files[0]); // Устанавливаем выбранный файл
+        setImage(event.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Проверка, что хотя бы один чекбокс выбран
         if (audience.length === 0) {
             alert("Пожалуйста, выберите хотя бы одну аудиторию");
             return;
         }
         const token = localStorage.getItem("token");
-        const formData = new FormData(); // Используем FormData для отправки файлов
+        const formData = new FormData();
         formData.append("title", title);
         formData.append("content", content);
         formData.append("audience", JSON.stringify(audience));
@@ -43,13 +42,13 @@ const CreateNews = () => {
             const response = await fetch("http://localhost:5000/news/create_news", {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${token}`, // Токен для авторизации
+                    Authorization: `Bearer ${token}`,
                 },
-                body: formData, // Передаём FormData
+                body: formData,
             });
             if (response.ok) {
                 alert("Новость успешно создана");
-                setTitle(""); // Сброс значений
+                setTitle("");
                 setContent("");
                 setAudience([]);
                 setImage(null);

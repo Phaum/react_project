@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Card, Typography, Button, Space } from "antd";
+import { LogoutOutlined, ToolOutlined, BookOutlined, DashboardOutlined } from "@ant-design/icons";
+const { Title, Text, Link: AntLink } = Typography;
 
 const Profile = () => {
     const [username, setUsername] = useState('');
@@ -12,7 +15,6 @@ const Profile = () => {
         const verifyToken = async () => {
             const token = localStorage.getItem('token');
             if (!token) {
-                // Если токена нет, перенаправляем на страницу авторизации
                 navigate('/registration');
                 return;
             }
@@ -25,12 +27,11 @@ const Profile = () => {
                     },
                 });
                 if (response.ok) {
-                    const data = await response.json(); // Получаем данные из токена
+                    const data = await response.json();
                     setUsername(data.username);
                     setRole(data.role);
                     setGroup(data.group);
                 } else {
-                    // Если токен недействителен, удаляем его и перенаправляем
                     localStorage.removeItem('token');
                     navigate('/registration');
                 }
@@ -46,9 +47,8 @@ const Profile = () => {
     }, [navigate]);
 
     const handleLogout = () => {
-        // Удаляем токен, имя пользователя и роль из localStorage
         localStorage.removeItem('token');
-        navigate('/registration'); // Перенаправляем на страницу авторизации
+        navigate('/registration');
     };
 
     if (loading) {
@@ -56,55 +56,52 @@ const Profile = () => {
     }
 
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto', textAlign: 'center' }}>
-            <h1>Профиль</h1>
-            <p>Добро пожаловать {username}</p>
-            <p>Ваша роль: {role === 'admin' ? 'Администратор' : role === 'teacher' ? 'Преподаватель' : role === 'student' ? 'Студент' : 'Гость'}.</p>
-            <p>Ваша группа: {group}</p>
-            {role === 'admin' && (
-                <div>
-                    <p>
-                        <Link to="/admin-tools" style={{ textDecoration: 'none', color: 'blue' }}>
-                            Перейти в панель администратора
+        <Card style={{ maxWidth: 400, margin: "0 auto", textAlign: "center" }}>
+            <Title level={2}>Профиль</Title>
+            <Text strong>Добро пожаловать, {username}!</Text>
+            <br />
+            <Text>Ваша роль:{" "}
+                {role === "admin" ? "Администратор" :
+                    role === "teacher" ? "Преподаватель" :
+                        role === "student" ? "Студент" : "Гость"}.
+            </Text>
+            <br />
+            <Text>Ваша группа: {group}</Text>
+            <br />
+            <Space direction="vertical" style={{ marginTop: 16 }}>
+                {role === "admin" && (
+                    <>
+                        <Link to="/admin-tools">
+                            <Button type="primary" icon={<DashboardOutlined />}>Панель администратора</Button>
                         </Link>
-                    </p>
-                    <p>
-                        <Link to="/teacher-tools" style={{ textDecoration: 'none', color: 'blue' }}>
-                            Инструменты преподавателя
+                        <Link to="/teacher-tools">
+                            <Button type="default" icon={<ToolOutlined />}>Инструменты преподавателя</Button>
                         </Link>
-                    </p>
-                </div>
-            )}
-            {role === 'teacher' && (
-                <div>
-                    <Link to="/teacher-tools" style={{ textDecoration: 'none', color: 'blue' }}>
-                        Инструменты преподавателя
+                    </>
+                )}
+                {role === "teacher" && (
+                    <Link to="/teacher-tools">
+                        <Button type="default" icon={<ToolOutlined />}>Инструменты преподавателя</Button>
                     </Link>
-                </div>
-            )}
-            {role === 'student' && group !== 'none' && (
-                <div>
-                    <Link to="/materials" style={{ textDecoration: 'none', color: 'blue' }}>
-                        Доступные материалы для студентов группы {group}
+                )}
+                {role === "student" && group !== "none" && (
+                    <Link to="/materials">
+                        <Button type="default" icon={<BookOutlined />}>
+                            Материалы для группы {group}
+                        </Button>
                     </Link>
-                </div>
-            )}
-            <div style={{ marginTop: '20px' }}>
-                <button
+                )}
+                <Button
+                    type="primary"
+                    danger
+                    icon={<LogoutOutlined />}
                     onClick={handleLogout}
-                    style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#ff4d4d',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                    }}
+                    style={{ marginTop: 20 }}
                 >
                     Выйти
-                </button>
-            </div>
-        </div>
+                </Button>
+            </Space>
+        </Card>
     );
 };
 

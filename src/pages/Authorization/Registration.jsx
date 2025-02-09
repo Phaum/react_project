@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, Form, Input, Button, Typography, Alert } from "antd";
+
+const { Title, Text, Link } = Typography;
 
 const AuthPage = () => {
-    const [isRegister, setIsRegister] = useState(false); // Переключатель между входом и регистрацией
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [isRegister, setIsRegister] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Проверка токена при загрузке страницы
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (token) {
-            verifyToken(token); // Проверяем токен на сервере
+            verifyToken(token);
         }
     }, []);
 
@@ -26,13 +26,8 @@ const AuthPage = () => {
                 },
             });
             if (response.ok) {
-                const data = await response.json();
-                console.log("Токен подтвержден", data);
-                // Токен валиден, перенаправляем на профиль
                 navigate('/profile');
             } else {
-                console.log("Ошибка подтверждения токена");
-                // Если токен недействителен, очищаем localStorage
                 localStorage.removeItem('token');
             }
         } catch (err) {
@@ -40,31 +35,25 @@ const AuthPage = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (values) => {
         try {
             const endpoint = isRegister
                 ? "http://localhost:5000/registration/register"
                 : "http://localhost:5000/registration/login";
-            const body = JSON.stringify({ username, password });
+
             const response = await fetch(endpoint, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
             });
+
             if (response.ok) {
                 const data = await response.json();
                 if (isRegister) {
                     alert("Регистрация успешна! Теперь вы можете войти.");
-                    setIsRegister(false); // Переключаемся на страницу входа
+                    setIsRegister(false);
                 } else {
-                    // Сохраняем токен
                     localStorage.setItem("token", data.token);
-                    // localStorage.setItem("role", data.role);
-                    // localStorage.setItem("username", data.username);
-                    // alert(`Добро пожаловать, ${data.username}!`);
                     navigate("/profile");
                 }
             } else {
@@ -72,63 +61,51 @@ const AuthPage = () => {
                 try {
                     const errorData = JSON.parse(errorMessage);
                     setError(errorData.message || "Ошибка аутентификации");
-                } catch (parseError) {
-                    setError(errorMessage); // Если сервер вернул не JSON, просто выводим текст
+                } catch {
+                    setError(errorMessage);
                 }
             }
         } catch (err) {
-            setError("Произошла ошибка. Пожалуйста, попробуйте ещё раз.");
+            setError("Произошла ошибка. Попробуйте ещё раз.");
             console.error(err);
         }
     };
 
-
     return (
-        <div className="main-container" style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', textAlign: 'center' }}>
-            <h1>{isRegister ? 'Регистрация' : 'Вход'}</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">Имя пользователя:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password">Пароль:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">{isRegister ? 'Зарегистрироваться' : 'Войти'}</button>
-            </form>
-            <p>
-                {isRegister ? 'Уже есть аккаунт?' : 'Нет аккаунта?'}{' '}
-                <button
-                    onClick={() => {
-                        setIsRegister(!isRegister);
-                        setError(null); // Сбрасываем ошибку при переключении
-                    }}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        color: 'blue',
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                    }}
+        <Card style={{ maxWidth: 400, margin: "0 auto", padding: 20, textAlign: "center" }}>
+            <Title level={2}>{isRegister ? "Регистрация" : "Вход"}</Title>
+
+            <Form layout="vertical" onFinish={handleSubmit}>
+                <Form.Item
+                    label="Имя пользователя"
+                    name="username"
+                    rules={[{ required: true, message: "Введите имя пользователя!" }]}
                 >
-                    {isRegister ? 'Войти' : 'Зарегистрироваться'}
-                </button>
-            </p>
-        </div>
+                    <Input placeholder="Введите имя" />
+                </Form.Item>
+
+                <Form.Item
+                    label="Пароль"
+                    name="password"
+                    rules={[{ required: true, message: "Введите пароль!" }]}
+                >
+                    <Input.Password placeholder="Введите пароль" />
+                </Form.Item>
+
+                {error && <Alert message={error} type="error" showIcon style={{ marginBottom: 10 }} />}
+
+                <Button type="primary" htmlType="submit" block>
+                    {isRegister ? "Зарегистрироваться" : "Войти"}
+                </Button>
+            </Form>
+
+            <Text>
+                {isRegister ? "Уже есть аккаунт?" : "Нет аккаунта?"}{" "}
+                <Link onClick={() => setIsRegister(!isRegister)}>
+                    {isRegister ? "Войти" : "Зарегистрироваться"}
+                </Link>
+            </Text>
+        </Card>
     );
 };
 

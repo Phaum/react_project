@@ -2,16 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/News.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import { Card, Button, Typography, List, Space } from "antd";
+const { Title } = Typography;
 
 const News = () => {
-    const [newsList, setNewsList] = useState([]); // Список новостей
-    // const [role, setRole] = useState("guest"); // Роль текущего пользователя (по умолчанию - гость)
-    const [loading, setLoading] = useState(true); // Состояние загрузки
-    const [error, setError] = useState(null); // Ошибки при загрузке новостей
-    const navigate = useNavigate(); // Для перенаправления после сохранения
-    // Функция для получения токена
+    const [newsList, setNewsList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
     const getToken = () => localStorage.getItem("token");
-    // Функция для загрузки новостей
     const fetchNews = async () => {
         const token = getToken();
         const endpoint = token
@@ -28,10 +27,6 @@ const News = () => {
             if (response.ok) {
                 const data = await response.json();
                 setNewsList(data);
-                // if (token) {
-                //     const storedRole = localStorage.getItem("role");
-                //     // setRole(storedRole || "guest");
-                // }
             } else {
                 const errorMessage = await response.text();
                 setError(`Ошибка при загрузке новостей: ${errorMessage}`);
@@ -45,7 +40,6 @@ const News = () => {
         }
     };
 
-    // Функция для удаления новости
     const deleteNews = async (id) => {
         const token = getToken();
         try {
@@ -67,55 +61,62 @@ const News = () => {
         }
     };
 
+    const formattedDate = (date) => {
+        const validDate = new Date(date);
+        return validDate.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+        });
+    };
+
     useEffect(() => {
-        fetchNews(); // Загружаем новости при монтировании компонента
+        fetchNews();
     }, []);
 
-    // Отображение загрузки
     if (loading) {
         return <p>Загрузка...</p>;
     }
 
-    // Отображение ошибок
     if (error) {
         return <p>{error}</p>;
     }
 
     return (
-        <div className="main-container">
-            <h1>Новости</h1>
+        <div style={{ padding: 20 }}>
+            <Title level={2}>Новости</Title>
             {newsList.some((news) => news.canEdit) && (
-                <div className="news-container">
-                    <Link to="/create_news" className="create-news-button">
-                        Создать новость
+                <div style={{ marginBottom: 16 }}>
+                    <Link to="/create_news">
+                        <Button type="primary">Создать новость</Button>
                     </Link>
                 </div>
             )}
             {newsList.length > 0 ? (
-                newsList.map((news) => (
-                    <div key={news.id} className="news-container">
-                        <div className="text-block">
-                            <Link to={`/news/${news.id}`}>
-                                <MarkdownRenderer content={news.title}/>
-                            </Link>
-                        </div>
-                        {news.canEdit && (
-                            <div className="text-block">
-                                <h2>
-                                    <Link to={`/news/edit/${news.id}`} className="edit-button">
-                                        Редактировать
-                                    </Link>
-                                </h2>
-                                <button
-                                    onClick={() => deleteNews(news.id)}
-                                    className="delete-button"
-                                >
-                                    Удалить новость
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                ))
+                <List
+                    grid={{ gutter: 16, column: 1 }}
+                    dataSource={newsList}
+                    renderItem={(news) => (
+                        <List.Item>
+                            <Card
+                                title={<Link to={`/news/${news.id}`}><MarkdownRenderer content={news.title}/></Link>}
+                                bordered
+                            >
+                            <p>{`Дата публикации: ${formattedDate(news.id)}` || "Описание новости отсутствует"}</p>
+                            {news.canEdit && (
+                            <>
+                                <Link to={`/news/edit/${news.id}`}>
+                                    <Button type="primary">Редактировать</Button>
+                                </Link>
+                                <Button danger onClick={() => deleteNews(news.id)}>
+                                    Удалить
+                                </Button>
+                            </>
+                            )}
+                            </Card>
+                        </List.Item>
+                    )}
+                />
             ) : (
                 <p>Пока нет новостей</p>
             )}

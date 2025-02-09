@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Announcements.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import { List, Card, Typography, Button, Space } from "antd";
+import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+const { Title, Paragraph } = Typography;
 
 const Announcements = () => {
-    const [announcementsList, setAnnouncementsList] = useState([]); // Список новостей
-    const [loading, setLoading] = useState(true); // Состояние загрузки
-    const [error, setError] = useState(null); // Ошибки при загрузке новостей
+    const [announcementsList, setAnnouncementsList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [role, setRole] = useState("guest");
-    const navigate = useNavigate(); // Для перенаправления после сохранения
-
-    // Функция для получения токена
+    const navigate = useNavigate();
     const getToken = () => localStorage.getItem("token");
 
-    // Функция для загрузки новостей
     const fetchAnnouncements = async () => {
         const token = getToken();
         const endpoint = token
@@ -36,17 +36,16 @@ const Announcements = () => {
                 }
             } else {
                 const errorMessage = await response.text();
-                setError(`Ошибка при загрузке новостей: ${errorMessage}`);
+                setError(`Ошибка при загрузке объявлений: ${errorMessage}`);
                 navigate("/registration");
             }
         } catch (error) {
-            setError("Произошла ошибка при загрузке новостей");
+            setError("Произошла ошибка при загрузке объявлений");
         } finally {
             setLoading(false);
         }
     };
 
-    // Функция для удаления новости
     const deleteAnnouncements = async (id) => {
         const token = getToken();
         try {
@@ -57,68 +56,73 @@ const Announcements = () => {
                 },
             });
             if (response.ok) {
-                alert("Новость успешно удалена");
+                alert("Объявление успешно удалена");
                 setAnnouncementsList((prevAnnouncements) => prevAnnouncements.filter((announcements) => announcements.id !== id));
             } else {
                 const errorMessage = await response.text();
-                alert(`Не удалось удалить новость: ${errorMessage}`);
+                alert(`Не удалось удалить объявление: ${errorMessage}`);
             }
         } catch (error) {
-            alert("Произошла ошибка при удалении новости");
+            alert("Произошла ошибка при удалении объявления");
         }
     };
 
+    const formattedDate = (date) => {
+        const validDate = new Date(date);
+        return validDate.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+        });
+    };
+
     useEffect(() => {
-        fetchAnnouncements(); // Загружаем новости при монтировании компонента
+        fetchAnnouncements();
     }, []);
 
-    // Отображение загрузки
     if (loading) {
         return <p>Загрузка...</p>;
     }
 
-    // Отображение ошибок
     if (error) {
         return <p>{error}</p>;
     }
 
     return (
-        <div className="main-container">
-            <h1>Объявления</h1>
-            {announcementsList.some((news) => news.canEdit) && (
-                <div className="announcements-container">
-                    <Link to="/create_announcements" className="create-announcements-button">
-                        Создать объявление
+        <div style={{ padding: 20 }}>
+            <Title level={2}>Объявления</Title>
+            {announcementsList.some((announcements) => announcements.canEdit) && (
+                <div style={{ marginBottom: 16 }}>
+                    <Link to="/create_announcements">
+                        <Button type="primary">Создать объявление</Button>
                     </Link>
                 </div>
             )}
             {announcementsList.length > 0 ? (
-                announcementsList.map((announcements) => (
-                    <div className="announcements-container" key={announcements.id}>
-                        <div className="text-block">
-                            <div>
-                                <Link to={`/announcements/${announcements.id}`} className="view-announcements-button">
-                                    <MarkdownRenderer content={announcements.title}/>
-                                </Link>
-                            </div>
-                        </div>
-                        {announcements.canEdit && (
-                            <div className="text-block">
-                                <h2>
-                                    <Link to={`/announcements/edit/${announcements.id}`} className="edit-button">
-                                        Редактировать
-                                    </Link>
-                                </h2>
-                                <button
-                                    onClick={() => deleteAnnouncements(announcements.id)}
-                                    className="delete-button"
-                                >
-                                    Удалить новость
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                ))
+                <List
+                    grid={{ gutter: 16, column: 1 }}
+                    dataSource={announcementsList}
+                    renderItem={(announcements) => (
+                        <List.Item>
+                            <Card
+                                title={<Link to={`/announcements/${announcements.id}`}><MarkdownRenderer content={announcements.title}/></Link>}
+                                bordered
+                                extra={announcements.canEdit && (
+                                    <Space>
+                                        <Link to={`/announcements/edit/${announcements.id}`}>
+                                            <Button type="primary">Редактировать</Button>
+                                        </Link>
+                                        <Button danger onClick={() => deleteAnnouncements(announcements.id)}>
+                                            Удалить
+                                        </Button>
+                                    </Space>
+                                )}
+                            >
+                                <p>{`Дата публикации: ${formattedDate(announcements.id)}` || "Описание объявления отсутствует"}</p>
+                            </Card>
+                        </List.Item>
+                    )}
+                />
             ) : (
                 <p>Пока нет объявлений</p>
             )}

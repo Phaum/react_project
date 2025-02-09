@@ -3,21 +3,21 @@ import { useParams, Link, useNavigate  } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/MaterialsDetail.css";
+import { Card, Typography, List, Button, Space } from "antd";
+import { EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined } from "@ant-design/icons";
+const { Title } = Typography;
 
 const MaterialsDetail = () => {
-    const { id } = useParams(); // Получаем ID из параметров маршрута
+    const { id } = useParams();
     const [materials, setMaterials] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [role, setRole] = useState("guest");
-    const navigate = useNavigate(); // Хук для навигации
+    const navigate = useNavigate();
     const [articles, setArticles] = useState([]);
-
-    // Функция для получения токена
     const getToken = () => localStorage.getItem("token");
 
     useEffect(() => {
-        // Функция для загрузки данных о конкретной новости
         const fetchMaterialsDetail = async () => {
             const token = getToken();
             const endpoint = token
@@ -48,7 +48,6 @@ const MaterialsDetail = () => {
             }
         };
 
-        // функция для отображения статей
         const fetchArticles = async () => {
             const token = getToken();
             try {
@@ -104,61 +103,66 @@ const MaterialsDetail = () => {
     }
 
     return (
-        <div className="main-container">
-            <div>
-                <MarkdownRenderer content={materials.title}/>
-                {materials.image ? (
-                    <img className="materials-container-image" src={materials.image} alt={materials.title} width="50%" onError={(e) => e.target.style.display = 'none'} />
-                ) : null}
-                <div className="detail-container">
-                    <MarkdownRenderer content={materials.content} />
-                </div>
-                <div>
-                    {articles.length > 0 ? (
-                        <div >
-                            {articles.map((article) => (
-                                <div key={article.id} className="detail-container">
-                                    <Link to={`/materials/${id}/articles/${article.id}`}>
-                                        <MarkdownRenderer content={article.title}/>
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p>Разделы отсутствуют</p>
-                    )}
-                </div>
-                <div className="detail-container">
-                    {materials.files && materials.files.length > 0 && (
-                        <div className="attached-files">
-                            <h3>Прикрепленные файлы:</h3>
-                            <ul>
-                                {materials.files.map((file, index) => (
-                                    <div key={index}>
-                                        <DownloadFile file={file} />
-                                    </div>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
-                <div className="fixed-buttons-container">
-                    <Link to="/materials" className="back-link">Назад к материалам</Link>
-                    {materials && materials.canEdit && (
-                        <>
-                            <Link to={`/materials/edit/${materials.id}`} className="edit-button">
-                                Редактировать
+        <div style={{ maxWidth: 800, margin: "auto" }}>
+            <Title level={2}>{<MarkdownRenderer content={materials.title}/>}</Title>
+            {materials.image && (
+                <img
+                    src={materials.image}
+                    alt={materials.title}
+                    style={{ width: "100%", maxHeight: 300, objectFit: "cover", marginBottom: 16 }}
+                    onError={(e) => e.target.style.display = "none"}
+                />
+            )}
+            <Card>
+                <Typography.Paragraph>
+                    {<MarkdownRenderer content={materials.content}/>}
+                </Typography.Paragraph>
+            </Card>
+            {articles.length > 0 ? (
+                <List
+                    header={<Title level={4}>Разделы</Title>}
+                    bordered
+                    dataSource={articles}
+                    renderItem={(article) => (
+                        <List.Item>
+                            <Link to={`/materials/${materials.id}/articles/${article.id}`}>
+                                {<MarkdownRenderer content={article.title}/>}
                             </Link>
-                            <button
-                                onClick={() => deleteMaterials(materials.id)}
-                                className="delete-button"
-                            >
-                                Удалить новость
-                            </button>
-                        </>
+                        </List.Item>
                     )}
-                </div>
-            </div>
+                    style={{ marginTop: 16 }}
+                />
+            ) : (
+                <p style={{ marginTop: 16 }}>Разделы отсутствуют</p>
+            )}
+            {materials.files && materials.files.length > 0 && (
+                <Card title="Прикрепленные файлы" style={{ marginTop: 16 }}>
+                    <List
+                        dataSource={materials.files}
+                        renderItem={(file, index) => (
+                            <List.Item key={index}>
+                                <FileOutlined style={{ marginRight: 8 }} />
+                                <DownloadFile file={file} />
+                            </List.Item>
+                        )}
+                    />
+                </Card>
+            )}
+            <Space style={{ marginTop: 16 }}>
+                <Button type="default" icon={<ArrowLeftOutlined />}>
+                    <Link to="/materials">Назад к материалам</Link>
+                </Button>
+                {materials.canEdit && (
+                    <>
+                        <Button type="primary" icon={<EditOutlined />}>
+                            <Link to={`/materials/edit/${materials.id}`}>Редактировать</Link>
+                        </Button>
+                        <Button danger icon={<DeleteOutlined />} onClick={() => deleteMaterials(materials.id)}>
+                            Удалить
+                        </Button>
+                    </>
+                )}
+            </Space>
         </div>
     );
 };

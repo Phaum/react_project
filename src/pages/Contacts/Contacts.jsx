@@ -1,20 +1,3 @@
-// import React from "react";
-// import { Button } from "antd";
-//
-// const Contacts = () => {
-//     return (
-//         <div className="main-container">
-//             <h1>Контакты</h1>
-//             <p>Здесь вы найдете ссылки на полезные контакты.</p>
-//         </div>
-//         // <div style={{ padding: 20 }}>
-//         //     <Button type="primary">Нажми меня</Button>
-//         //     <Button>Обычная кнопка</Button>
-//         // </div>
-//     );
-// };
-//
-// export default Contacts;
 import React from "react";
 import { Card, Avatar, Typography, Row, Col, Divider } from "antd";
 import { UserOutlined, MailOutlined, GithubOutlined } from "@ant-design/icons";
@@ -25,7 +8,7 @@ const creators = [
     {
         id: 1,
         name: "Ферштадт Кирилл",
-        role: "Разработчик Backend",
+        role: "Full-Stack разработчик",
         email: "fershtadt.kirill@gmail.com",
         // github: "https://github.com/ivanivanov",
         telegram: "https://t.me/Phaum",
@@ -34,7 +17,7 @@ const creators = [
     {
         id: 2,
         name: "Андрей Корнюшин",
-        role: "Разработчик Frontend",
+        role: "QA",
         email: "andrey.kornyshin2017@gmail.com",
         telegram: "https://t.me/AndewStark",
         avatar: "https://sun1-89.userapi.com/s/v1/ig2/aBUWW94R5hi_JvrcTqatWUe1ORhzWdyk93IAgjC5vkiZbOnMjMGdRN098a4kldxuwciRmZaAdDsRGOW6tFPLGC1r.jpg?quality=95&crop=17,461,703,703&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640&ava=1&cs=200x200"

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Select, Space, Input } from "antd";
+import { Table, Input, Select, Button, Form, Popconfirm, message, Modal } from "antd";
+const { Option } = Select;
 
 const AdminPanel = () => {
     const [users, setUsers] = useState([]);
@@ -7,15 +8,14 @@ const AdminPanel = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [newGroupName, setNewGroupName] = useState("");
-
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("user"); // По умолчанию "user"
-    const [group, setGroup] = useState(""); // Выбранная группа
-
+    const [role, setRole] = useState("user");
+    const [group, setGroup] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [form] = Form.useForm();
     const token = localStorage.getItem("token");
 
-    // Загрузка пользователей и групп с сервера
     useEffect(() => {
         const fetchUsersAndGroups = async () => {
             try {
@@ -40,7 +40,6 @@ const AdminPanel = () => {
         fetchUsersAndGroups();
     }, [token]);
 
-    // Удаление пользователя
     const deleteUser = async (id) => {
         try {
             const response = await fetch(`http://localhost:5000/admin-tools/${id}`, {
@@ -56,7 +55,6 @@ const AdminPanel = () => {
         }
     };
 
-    // Обновление пользователя (Имя, Роль, Группа)
     const updateUser = async (id, updatedUser) => {
         try {
             const response = await fetch(`http://localhost:5000/admin-tools/${id}`, {
@@ -77,7 +75,6 @@ const AdminPanel = () => {
         }
     };
 
-    // Изменение группы пользователя
     const updateUserGroup = async (id, newGroup) => {
         try {
             const response = await fetch(`http://localhost:5000/admin-tools/${id}/group`, {
@@ -97,7 +94,6 @@ const AdminPanel = () => {
         }
     };
 
-    // Функция для сброса пароля
     const resetPassword = async (id) => {
         const newPassword = prompt("Введите новый пароль (мин. 6 символов):");
         if (!newPassword || newPassword.length < 6) {
@@ -123,7 +119,6 @@ const AdminPanel = () => {
         }
     };
 
-    // Добавление новой группы
     const addNewGroup = async () => {
         if (!newGroupName.trim()) {
             alert("Название группы не может быть пустым!");
@@ -142,15 +137,13 @@ const AdminPanel = () => {
                 throw new Error("Ошибка при добавлении группы");
             }
             const updatedGroups = await response.json();
-            setGroups(updatedGroups.groups); // Обновляем список групп
+            setGroups(updatedGroups.groups);
             setNewGroupName("");
-            alert("Группа успешно добавлена!");
         } catch (err) {
             alert(err.message);
         }
     };
 
-    // Функция создания нового пользователя
     const handleCreateUser = async (e) => {
         e.preventDefault();
         if (password.length < 6) {
@@ -187,7 +180,6 @@ const AdminPanel = () => {
         }
     };
 
-    // Удаление группы
     const deleteGroup = async (groupName) => {
         const usersInGroup = users.some((user) => user.group === groupName);
         if (usersInGroup) {
@@ -205,7 +197,6 @@ const AdminPanel = () => {
                 throw new Error("Ошибка при удалении группы");
             }
             setGroups(groups.filter((group) => group !== groupName));
-            alert("Группа успешно удалена!");
         } catch (err) {
             alert(err.message);
         }
@@ -213,152 +204,161 @@ const AdminPanel = () => {
 
     if (loading) return <p>Загрузка...</p>;
     if (error) return <p>Ошибка: {error}</p>;
-    return (
-        <div>
-            <h1>Администратор: управление пользователями</h1>
-            <table border="1">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Имя пользователя</th>
-                    <th>Роль</th>
-                    <th>Группа</th>
-                    <th>Действия</th>
-                </tr>
-                </thead>
-                <tbody>
-                {users.map((user) => (
-                    <tr key={user.id}>
-                        <td>{user.id}</td>
-                        <td>
-                            <Input placeholder="Имя пользователя"
-                                   type="text"
-                                   value={user.username}
-                                   onChange={(e) =>
-                                       setUsers((prev) =>
-                                           prev.map((u) =>
-                                               u.id === user.id
-                                                   ? { ...u, username: e.target.value }
-                                                   : u
-                                           )
-                                       )
-                                   }
-                            />
-                        </td>
-                        <td>
-                            <select
-                                value={user.role}
-                                onChange={(e) =>
-                                    setUsers((prev) =>
-                                        prev.map((u) =>
-                                            u.id === user.id
-                                                ? { ...u, role: e.target.value }
-                                                : u
-                                        )
-                                    )
-                                }
-                            >
-                                <option value="admin">Админ</option>
-                                <option value="teacher">Учитель</option>
-                                <option value="student">Студент</option>
-                                <option value="user">Пользователь</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select
-                                value={user.group}
-                                onChange={(e) => updateUserGroup(user.id, e.target.value)}
-                            >
-                                {groups.map((group) => (
-                                    <option key={group} value={group}>
-                                        {group}
-                                    </option>
-                                ))}
-                            </select>
-                        </td>
-                        <td>
-                            <button onClick={() => resetPassword(user.id)}>Изменить пароль</button>
-                            <button onClick={() => updateUser(user.id, user)}>Сохранить</button>
-                            <button onClick={() => deleteUser(user.id)}>Удалить</button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <h2>Добавить новую группу</h2>
-            <div>
-                <input
-                    type="text"
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    placeholder="Введите название группы"
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const userColumns = [
+        { title: "ID", dataIndex: "id", key: "id" },
+        {
+            title: "Имя пользователя",
+            dataIndex: "username",
+            key: "username",
+            sorter: (a, b) => a.group.localeCompare(b.group),
+            render: (text, record) => (
+                <Input
+                    value={text}
+                    onChange={(e) =>
+                        setUsers((prev) =>
+                            prev.map((u) =>
+                                u.id === record.id ? { ...u, username: e.target.value } : u
+                            )
+                        )
+                    }
                 />
-                <button onClick={addNewGroup}>Добавить группу</button>
-            </div>
-            <table border="1">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Название</th>
-                    <th>Действие</th>
-                </tr>
-                </thead>
-                <tbody>
-                {groups.map((group, index) => (
-                    <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{group}</td>
-                        <td>
-                            <button onClick={() => deleteGroup(group)}>Удалить</button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <div>
-                <h2>Добавить пользователя</h2>
-                <form onSubmit={handleCreateUser}>
-                    <div>
-                            <label>Имя пользователя:</label>
-                            <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>Пароль:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>Роль:</label>
-                        <select value={role} onChange={(e) => setRole(e.target.value)}>
-                            <option value="user">Пользователь</option>
-                            <option value="student">Студент</option>
-                            <option value="teacher">Учитель</option>
-                            <option value="admin">Администратор</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Группа:</label>
-                        <select value={group} onChange={(e) => setGroup(e.target.value)} required>
-                            <option value="">Выберите группу</option>
+            ),
+        },
+        {
+            title: "Роль",
+            dataIndex: "role",
+            key: "role",
+            sorter: (a, b) => a.group.localeCompare(b.group),
+            render: (text, record) => (
+                <Select
+                    value={text}
+                    onChange={(value) =>
+                        setUsers((prev) =>
+                            prev.map((u) => (u.id === record.id ? { ...u, role: value } : u))
+                        )
+                    }
+                    style={{ width: 120 }}
+                >
+                    <Option value="admin">Админ</Option>
+                    <Option value="teacher">Учитель</Option>
+                    <Option value="student">Студент</Option>
+                    <Option value="user">Пользователь</Option>
+                </Select>
+            ),
+        },
+        {
+            title: "Группа",
+            dataIndex: "group",
+            key: "group",
+            sorter: (a, b) => a.group.localeCompare(b.group),
+            render: (text, record) => (
+                <Select value={text} onChange={(value) => updateUserGroup(record.id, value)} style={{ width: 120 }}>
+                    {groups.map((group) => (
+                        <Option key={group} value={group}>
+                            {group}
+                        </Option>
+                    ))}
+                </Select>
+            ),
+        },
+        {
+            title: "Действия",
+            key: "actions",
+            render: (_, record) => (
+                <>
+                    <Button onClick={() => resetPassword(record.id)} style={{ marginRight: 8 }}>
+                        Изменить пароль
+                    </Button>
+                    <Button type="primary" onClick={() => updateUser(record.id, record)} style={{ marginRight: 8 }}>
+                        Сохранить
+                    </Button>
+                    <Popconfirm title="Удалить пользователя?" onConfirm={() => deleteUser(record.id)}>
+                        <Button danger>Удалить</Button>
+                    </Popconfirm>
+                </>
+            ),
+        },
+    ];
+
+    const groupColumns = [
+        { title: "ID", dataIndex: "id", key: "id", render: (_, __, index) => index + 1 },
+        { title: "Название", dataIndex: "name", key: "name",
+            sorter: (a, b) => a.name.localeCompare(b.name)
+        },
+        {
+            title: "Действие",
+            key: "actions",
+            render: (_, record) => (
+                <Popconfirm title="Удалить группу?" onConfirm={() => deleteGroup(record.name)}>
+                    <Button danger>Удалить</Button>
+                </Popconfirm>
+            ),
+        },
+    ];
+
+    return (
+        <div style={{ padding: 20 }}>
+            <h1>Администратор: управление пользователями</h1>
+            <Table columns={userColumns} dataSource={users} rowKey="id" pagination={{ pageSize: 5 }} />
+            <h2>Добавить новую группу</h2>
+            <Input
+                placeholder="Введите название группы"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                style={{ width: 200, marginRight: 10 }}
+            />
+            <Button type="primary" onClick={addNewGroup}>
+                Добавить группу
+            </Button>
+            <Table
+                columns={groupColumns}
+                dataSource={groups.map((name) => ({ name }))}
+                rowKey="name"
+                pagination={false}
+                style={{ marginTop: 20 }}
+            />
+            <Button type="primary" onClick={showModal} style={{ marginTop: 20 }}>
+                Добавить пользователя
+            </Button>
+            <Modal title="Добавить пользователя" open={isModalOpen} onCancel={handleCancel} footer={null}>
+                <Form layout="vertical" form={form} onFinish={handleCreateUser}>
+                    <Form.Item label="Имя пользователя" name="username" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Пароль" name="password" rules={[{ required: true }]}>
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item label="Роль" name="role" rules={[{ required: true }]}>
+                        <Select>
+                            <Option value="user">Пользователь</Option>
+                            <Option value="student">Студент</Option>
+                            <Option value="teacher">Учитель</Option>
+                            <Option value="admin">Администратор</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="Группа" name="group" rules={[{ required: true }]}>
+                        <Select>
                             {groups.map((g) => (
-                                <option key={g} value={g}>
+                                <Option key={g} value={g}>
                                     {g}
-                                </option>
+                                </Option>
                             ))}
-                        </select>
-                    </div>
-                    <button type="submit">Создать пользователя</button>
-                </form>
-            </div>
+                        </Select>
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Создать
+                    </Button>
+                </Form>
+            </Modal>
         </div>
     );
 };

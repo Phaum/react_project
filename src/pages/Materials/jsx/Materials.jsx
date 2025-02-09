@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Materials.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import { Card, Button, Typography, List, Space } from "antd";
+const { Title } = Typography;
 
 const Materials = () => {
-    const [materialsList, setMaterialsList] = useState([]); // Список новостей
-    const [loading, setLoading] = useState(true); // Состояние загрузки
-    const [error, setError] = useState(null); // Ошибки при загрузке новостей
+    const [materialsList, setMaterialsList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [role, setRole] = useState("guest");
-    const navigate = useNavigate(); // Для перенаправления после сохранения
-
-    // Функция для получения токена
+    const navigate = useNavigate();
     const getToken = () => localStorage.getItem("token");
 
-    // Функция для загрузки новостей
     const fetchMaterials = async () => {
         const token = getToken();
         const endpoint = token
@@ -30,10 +29,6 @@ const Materials = () => {
             if (response.ok) {
                 const data = await response.json();
                 setMaterialsList(data);
-                // if (token) {
-                //     const storedRole = localStorage.getItem("role");
-                //     setRole(storedRole || "guest");
-                // }
             } else {
                 const errorMessage = await response.text();
                 setError(`Ошибка при загрузке материалов: ${errorMessage}`);
@@ -46,7 +41,6 @@ const Materials = () => {
         }
     };
 
-    // Функция для удаления новости
     const deleteMaterials = async (id) => {
         const token = getToken();
         try {
@@ -61,7 +55,7 @@ const Materials = () => {
                 setMaterialsList((prevMaterials) => prevMaterials.filter((materials) => materials.id !== id));
             } else {
                 const errorMessage = await response.text();
-                alert(`Не удалось удалить новость: ${errorMessage}`);
+                alert(`Не удалось удалить материал: ${errorMessage}`);
             }
         } catch (error) {
             alert("Произошла ошибка при удалении материала");
@@ -69,58 +63,63 @@ const Materials = () => {
     };
 
     useEffect(() => {
-        fetchMaterials(); // Загружаем новости при монтировании компонента
+        fetchMaterials();
     }, []);
 
-    // Отображение загрузки
+    const formattedDate = (date) => {
+        const validDate = new Date(date);
+        return validDate.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+        });
+    };
+
     if (loading) {
         return <p>Загрузка...</p>;
     }
 
-    // Отображение ошибок
     if (error) {
         return <p>{error}</p>;
     }
 
     return (
-        <div className="main-container">
-            <h1>Учебные материалы</h1>
+        <div style={{ padding: 20 }}>
+            <Title level={2}>Материалы</Title>
             {materialsList.some((materials) => materials.canEdit) && (
-                <div className="materials-container">
-                    <Link to="/create_materials" className="create-materials-button">
-                        Создать материал
+                <div style={{ marginBottom: 16 }}>
+                    <Link to="/create_materials">
+                        <Button type="primary">Создать материал</Button>
                     </Link>
                 </div>
             )}
             {materialsList.length > 0 ? (
-                materialsList.map((materials) => (
-                    <div className="materials-container" key={materials.id}>
-                        <div className="text-block">
-                            <h2>
-                                <Link to={`/materials/${materials.id}`} className="view-materials-button">
-                                    <MarkdownRenderer content={materials.title}/>
-                                </Link>
-                            </h2>
-                        </div>
-                        {materials.canEdit && (
-                            <div className="text-block">
-                                <h2>
-                                    <Link to={`/materials/edit/${materials.id}`} className="edit-button">
-                                        Редактировать
-                                    </Link>
-                                </h2>
-                                <button
-                                    onClick={() => deleteMaterials(materials.id)}
-                                    className="delete-button"
-                                >
-                                    Удалить новость
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                ))
+                <List
+                    grid={{ gutter: 16, column: 1 }}
+                    dataSource={materialsList}
+                    renderItem={(materials) => (
+                        <List.Item>
+                            <Card
+                                title={<Link to={`/materials/${materials.id}`}><MarkdownRenderer content={materials.title}/></Link>}
+                                bordered
+                                extra={materials.canEdit && (
+                                    <Space>
+                                        <Link to={`/materials/edit/${materials.id}`}>
+                                            <Button type="primary">Редактировать</Button>
+                                        </Link>
+                                        <Button danger onClick={() => deleteMaterials(materials.id)}>
+                                            Удалить
+                                        </Button>
+                                    </Space>
+                                )}
+                            >
+                                <p>{`Дата публикации: ${formattedDate(materials.id)}` || "Описание материалы отсутствует"}</p>
+                            </Card>
+                        </List.Item>
+                    )}
+                />
             ) : (
-                <p>Пока нет объявлений</p>
+                <p>Пока нет материалов</p>
             )}
         </div>
     );

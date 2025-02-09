@@ -4,23 +4,22 @@ import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 
 const EditMaterials = () => {
-    const { id } = useParams(); // Получаем ID новости из URL
-    const [title, setTitle] = useState(""); // Состояние для заголовка
-    const [content, setContent] = useState(""); // Состояние для содержимого
-    const [image, setImage] = useState(null); // Состояние для текущего изображения
-    const [newImage, setNewImage] = useState(null); // Состояние для нового изображения
+    const { id } = useParams();
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [image, setImage] = useState(null);
+    const [newImage, setNewImage] = useState(null);
     const [files, setFiles] = useState([]);
     const [newFiles, setNewFiles] = useState([]);
-    const [error, setError] = useState(null); // Для ошибок
-    const navigate = useNavigate(); // Для перенаправления после сохранения
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
     const [audience, setAudience] = useState([]);
-    const [selectedGroups, setSelectedGroups] = useState([]); // Выбранные группы
-    const [allGroups, setAllGroups] = useState([]); // Все доступные группы
+    const [selectedGroups, setSelectedGroups] = useState([]);
+    const [allGroups, setAllGroups] = useState([]);
     const token = localStorage.getItem("token");
     const [articles, setArticles] = useState([]);
     const [newArticle, setNewArticle] = useState({ title: "", content: "" });
 
-    // Загружаем данные новости для редактирования
     useEffect(() => {
         const getToken = () => localStorage.getItem("token");
         const fetchMaterials = async () => {
@@ -39,10 +38,10 @@ const EditMaterials = () => {
                 const data = await response.json();
                 setTitle(data.title);
                 setContent(data.content);
-                setImage(data.image); // Сохраняем URL текущего изображения
-                setFiles(data.files || []); // Теперь загружаются файлы
-                setAudience(data.audience || []); // Загружаем аудиторию
-                setSelectedGroups(data.groups || []); // Заполняем группы из данных
+                setImage(data.image);
+                setFiles(data.files || []);
+                setAudience(data.audience || []);
+                setSelectedGroups(data.groups || []);
             } catch (error) {
                 console.error("Ошибка при загрузке новости:", error);
                 setError("Ошибка при загрузке данных");
@@ -62,10 +61,10 @@ const EditMaterials = () => {
                 if (!groupsResponse.ok || !newsResponse.ok) {
                     throw new Error("Ошибка загрузки данных");
                 }
-                const allGroupsData = await groupsResponse.json(); // Получаем список всех групп
-                const newsData = await newsResponse.json(); // Данные конкретной новости
-                setAllGroups(allGroupsData || []); // Устанавливаем список всех групп
-                setSelectedGroups(newsData.group || []); // Устанавливаем группы, связанные с новостью
+                const allGroupsData = await groupsResponse.json();
+                const newsData = await newsResponse.json();
+                setAllGroups(allGroupsData || []);
+                setSelectedGroups(newsData.group || []);
             } catch (error) {
                 console.error("Ошибка при загрузке данных:", error);
                 setAllGroups([]);
@@ -93,7 +92,6 @@ const EditMaterials = () => {
         fetchArticles();
     }, [id, token]);
 
-    // Обработчик выбора аудитории
     const handleCheckboxChange = (event) => {
         const { value, checked } = event.target;
         if (checked) {
@@ -103,22 +101,21 @@ const EditMaterials = () => {
         }
     };
 
-    // Обработка обновления новости
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem("token"); // Добавляем токен из localStorage
+            const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:5000/materials/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // Передаём токен
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ title, content, audience, groups: selectedGroups }),
             });
             if (response.ok) {
                 alert("Новость успешно обновлена");
-                navigate(`/materials/${id}`); // Перенаправляем на страницу новостей
+                navigate(`/materials/${id}`);
             } else {
                 const errorMessage = await response.text();
                 console.error("Ошибка при обновлении новости:", errorMessage);
@@ -130,7 +127,6 @@ const EditMaterials = () => {
         }
     };
 
-    // Обработка загрузки нового изображения
     const handleImageUpload = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -146,7 +142,7 @@ const EditMaterials = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setImage(data.imageUrl); // Обновляем URL изображения
+                setImage(data.imageUrl);
                 alert("Изображение успешно загружено");
                 window.location.reload();
             } else {
@@ -160,7 +156,6 @@ const EditMaterials = () => {
         }
     };
 
-    // Обработка удаления изображения
     const handleImageDelete = async (e) => {
         e.preventDefault();
         try {
@@ -172,7 +167,7 @@ const EditMaterials = () => {
                 },
             });
             if (response.ok) {
-                setImage(null); // Удаляем изображение из состояния
+                setImage(null);
                 alert("Изображение успешно удалено");
                 window.location.reload();
             } else {
@@ -187,15 +182,14 @@ const EditMaterials = () => {
     };
 
     if (error) {
-        return <p>{error}</p>; // Отображение ошибки при загрузке
+        return <p>{error}</p>;
     }
 
-    // Удаление файла
     const handleFileDelete = async (e, fileUrl) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const filename = decodeURIComponent(fileUrl.split("/").pop()); // Декодируем имя файла
+            const filename = decodeURIComponent(fileUrl.split("/").pop());
             const response = await fetch(`http://localhost:5000/materials/${id}/${filename}`, {
                 method: "DELETE",
                 headers: {
@@ -206,7 +200,7 @@ const EditMaterials = () => {
                 const errorMessage = await response.text();
                 throw new Error(`Ошибка при удалении файла: ${errorMessage}`);
             }
-            setFiles((prevFiles) => prevFiles.filter((file) => file.url !== fileUrl)); // Удаляем из списка
+            setFiles((prevFiles) => prevFiles.filter((file) => file.url !== fileUrl));
             alert("Файл успешно удален");
             window.location.reload();
         } catch (error) {
@@ -236,8 +230,8 @@ const EditMaterials = () => {
                 throw new Error("Ошибка при загрузке файлов");
             }
             const data = await response.json();
-            setFiles((prev) => [...prev, ...data.files]); // Обновляем список файлов
-            setNewFiles([]); // Очищаем выбранные файлы
+            setFiles((prev) => [...prev, ...data.files]);
+            setNewFiles([]);
             alert("Файлы успешно загружены");
             window.location.reload();
         } catch (error) {
@@ -246,7 +240,6 @@ const EditMaterials = () => {
         }
     };
 
-    // Функция для добавления статьи
     const addArticle = async (e) => {
         e.preventDefault();
         if (!newArticle.title || !newArticle.content) {
@@ -275,7 +268,6 @@ const EditMaterials = () => {
         }
     };
 
-    // Функция для удаления статьи
     const deleteArticle = async (e, articleId) => {
         e.preventDefault();
         try {
@@ -371,8 +363,8 @@ const EditMaterials = () => {
                                             const value = e.target.value;
                                             setSelectedGroups((prevSelected) =>
                                                 prevSelected.includes(value)
-                                                    ? prevSelected.filter((g) => g !== value) // Удаление, если уже выбрано
-                                                    : [...prevSelected, value] // Добавление, если не выбрано
+                                                    ? prevSelected.filter((g) => g !== value)
+                                                    : [...prevSelected, value]
                                             );
                                         }}
                                     />

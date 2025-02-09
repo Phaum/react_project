@@ -76,25 +76,11 @@ newsRouter.get("/read", authenticateToken, (req, res) => {
         if (!user) {
             return res.status(403).json({ message: "Пользователь не найден" });
         }
-        const userRole = user.role; // Получаем актуальную роль
-        // Загружаем новости
+        const userRole = user.role;
         let newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-        // Если роль admin, показываем все новости
         if (userRole === "admin") {
-            // return res.send(newsIndex);
             return res.json(newsIndex.map((news) => ({ ...news, canEdit: true })));
         }
-        // // Фильтруем новости по ролям и группам
-        // let filteredNews = newsIndex.filter(
-        //     (news) =>
-        //         news.audience.includes(userRole) ||
-        //         news.audience.includes("guest")
-        // );
-        // if (filteredNews.length === 0) {
-        //     return res.json([]); // Всегда возвращаем пустой массив
-        // }
-        // res.send(filteredNews);
-        // Фильтрация новостей по ролям + добавление `canEdit`
         const filteredNews = newsIndex.map((news) => ({
             ...news,
             canEdit: userRole === "teacher" || userRole === "admin", // Разрешение редактирования
