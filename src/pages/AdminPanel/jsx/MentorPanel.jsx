@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Table, Input, Select, Button, Form, Popconfirm, message, Modal } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import {baseBackendUrl} from "../../../shared/constants"
+
 const { Option } = Select;
 
 const MentorPanel = () => {
@@ -21,8 +23,8 @@ const MentorPanel = () => {
             try {
                 const token = localStorage.getItem("token");
                 const [usersResponse, groupsResponse] = await Promise.all([
-                    fetch("http://localhost:5000/admin-tools", { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch("http://localhost:5000/admin-tools/groups", { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch(`${baseBackendUrl}/admin-tools`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch(`${baseBackendUrl}/admin-tools/groups`, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
                 if (!usersResponse.ok || !groupsResponse.ok) {
                     throw new Error("Ошибка при загрузке данных");
@@ -42,7 +44,7 @@ const MentorPanel = () => {
 
     const deleteUser = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/admin-tools/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -57,7 +59,7 @@ const MentorPanel = () => {
 
     const updateUser = async (id, updatedUser) => {
         try {
-            const response = await fetch(`http://localhost:5000/admin-tools/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,7 +79,7 @@ const MentorPanel = () => {
 
     const updateUserGroup = async (id, newGroup) => {
         try {
-            const response = await fetch(`http://localhost:5000/admin-tools/${id}/group`, {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}/group`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -102,7 +104,7 @@ const MentorPanel = () => {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/admin-tools/${id}/reset-password`, {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}/reset-password`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -125,7 +127,7 @@ const MentorPanel = () => {
             return;
         }
         try {
-            const response = await fetch("http://localhost:5000/admin-tools/groups", {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/groups`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -156,7 +158,7 @@ const MentorPanel = () => {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch("http://localhost:5000/admin-tools/create", {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -182,7 +184,7 @@ const MentorPanel = () => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:5000/admin-tools/groups/${groupName}`, {
+            const response = await fetch(`${baseBackendUrl}/admin-tools/groups/${groupName}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,

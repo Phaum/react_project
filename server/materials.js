@@ -37,7 +37,6 @@ materialsRouter.post(
     authorizeRole(["teacher", "admin"]),
     upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]), // 1 фото + до 5 файлов
     (req, res) => {
-        console.log("Полученные данные:", req.body);
         const { title, content, audience, groups } = req.body;
         const indexPath = path.join(markdownFolder, "materials-index.json");
         const usersFile = path.join(__dirname, "users.json");
@@ -411,7 +410,6 @@ materialsRouter.delete("/:id/delete_image", authenticateToken, authorizeRole(["t
 materialsRouter.delete("/:id/:filename", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id, filename } = req.params;
     const indexPath = path.join(markdownFolder, "materials-index.json");
-    console.log(`Запрос на удаление файла: ${filename} из новости: ${id}`);
     if (!fs.existsSync(indexPath)) {
         console.error("Файл индекса новостей не найден!");
         return res.status(404).json({ message: "Индекс новостей не найден" });
