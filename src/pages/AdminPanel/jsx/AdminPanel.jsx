@@ -144,8 +144,8 @@ const AdminPanel = () => {
         }
     };
 
-    const handleCreateUser = async (e) => {
-        e.preventDefault();
+    const handleCreateUser = async (values) => {
+        const { username, password, role, group } = values;
         if (password.length < 6) {
             alert("Пароль должен быть минимум 6 символов!");
             return;
@@ -168,13 +168,8 @@ const AdminPanel = () => {
                 const errorText = await response.text();
                 throw new Error(errorText);
             }
-            const data = await response.json();
             alert("Пользователь успешно создан!");
-            window.location.reload();
-            setUsername("");
-            setPassword("");
-            setRole("user");
-            setGroup("");
+            window.location.reload(); // Обновляем страницу
         } catch (error) {
             alert(`Ошибка: ${error.message}`);
         }

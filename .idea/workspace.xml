@@ -7,32 +7,7 @@
     <list default="true" id="cbce3130-25b5-488e-ac26-4b3607cd5d6e" name="Changes" comment="">
       <changelist_data name="Phaum" email="" automatic="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/groups.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/groups.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/markdown-files-materials/materials-index.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/markdown-files-materials/materials-index.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/news.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/news.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/ranking.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/ranking.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/ranking.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/ranking.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/users.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/AdminPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/AdminPanel.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Announcements/jsx/Announcements.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/Announcements.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Announcements/jsx/AnnouncementsDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/AnnouncementsDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Announcements/jsx/CreateAnnouncements.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/CreateAnnouncements.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Announcements/jsx/EditAnnouncements.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Announcements/jsx/EditAnnouncements.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Authorization/Registration.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Authorization/Registration.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Contacts/Contacts.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Contacts/Contacts.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Materials/jsx/ArticleDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/ArticleDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Materials/jsx/CreateMaterials.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/CreateMaterials.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Materials/jsx/EditArticles.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/EditArticles.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Materials/jsx/EditMaterials.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/EditMaterials.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Materials/jsx/Materials.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/Materials.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Materials/jsx/MaterialsDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Materials/jsx/MaterialsDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/News/jsx/CreateNews.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/News/jsx/CreateNews.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/News/jsx/EditNews.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/News/jsx/EditNews.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/News/jsx/News.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/News/jsx/News.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/News/jsx/NewsDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/News/jsx/NewsDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Profile/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Profile/Profile.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/RatingTable/jsx/RatingTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/RatingTable/jsx/RatingTable.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +73,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737725600200</updated>
-      <workItem from="1737725601244" duration="245873000" />
+      <workItem from="1737725601244" duration="247602000" />
     </task>
     <servers />
   </component>
