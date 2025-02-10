@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams,Link, useNavigate } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
+import {baseBackendUrl} from "../../../shared/constants"
 
 const EditMaterials = () => {
     const { id } = useParams();
@@ -25,7 +26,7 @@ const EditMaterials = () => {
         const fetchMaterials = async () => {
             try {
                 const token = getToken();
-                const response = await fetch(`http://localhost:5000/materials/${id}`,{
+                const response = await fetch(`${baseBackendUrl}/materials/${id}`,{
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
@@ -51,10 +52,10 @@ const EditMaterials = () => {
         const fetchGroups = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const groupsResponse = await fetch("http://localhost:5000/materials/groups", {
+                const groupsResponse = await fetch(`${baseBackendUrl}/materials/groups`, {
                                 headers: { Authorization: `Bearer ${token}` },
                             });
-                const newsResponse = await fetch(`http://localhost:5000/materials/${id}/groups`, {
+                const newsResponse = await fetch(`${baseBackendUrl}/materials/${id}/groups`, {
                                 headers: { Authorization: `Bearer ${token}` },
                             });
 
@@ -73,7 +74,7 @@ const EditMaterials = () => {
         };
         const fetchArticles = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles`,{
+                const response = await fetch(`${baseBackendUrl}/materials/${id}/articles`,{
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -105,7 +106,7 @@ const EditMaterials = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -133,7 +134,7 @@ const EditMaterials = () => {
         formData.append("image", newImage);
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/upload_image`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/upload_image`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -160,7 +161,7 @@ const EditMaterials = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/delete_image`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/delete_image`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -190,7 +191,7 @@ const EditMaterials = () => {
         try {
             const token = localStorage.getItem("token");
             const filename = decodeURIComponent(fileUrl.split("/").pop());
-            const response = await fetch(`http://localhost:5000/materials/${id}/${filename}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/${filename}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -219,7 +220,7 @@ const EditMaterials = () => {
         const formData = new FormData();
         newFiles.forEach((file) => formData.append("files", file));
         try {
-            const response = await fetch(`http://localhost:5000/materials/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -248,7 +249,7 @@ const EditMaterials = () => {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -272,7 +273,7 @@ const EditMaterials = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

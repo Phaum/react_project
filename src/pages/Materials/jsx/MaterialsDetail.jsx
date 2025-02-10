@@ -5,6 +5,8 @@ import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/MaterialsDetail.css";
 import { Card, Typography, List, Button, Space } from "antd";
 import { EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined } from "@ant-design/icons";
+import {baseBackendUrl} from "../../../shared/constants"
+
 const { Title } = Typography;
 
 const MaterialsDetail = () => {
@@ -21,10 +23,10 @@ const MaterialsDetail = () => {
         const fetchMaterialsDetail = async () => {
             const token = getToken();
             const endpoint = token
-                ? "http://localhost:5000/materials/read"
-                : "http://localhost:5000/materials/read_guest";
+                ? `${baseBackendUrl}/materials/read`
+                : `${baseBackendUrl}/materials/read_guest`;
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}`, {
+                const response = await fetch(`${baseBackendUrl}/materials/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -51,7 +53,7 @@ const MaterialsDetail = () => {
         const fetchArticles = async () => {
             const token = getToken();
             try {
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles`, {
+                const response = await fetch(`${baseBackendUrl}/materials/${id}/articles`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -72,7 +74,7 @@ const MaterialsDetail = () => {
     const deleteMaterials = async (id) => {
         const token = getToken();
         try {
-            const response = await fetch(`http://localhost:5000/materials/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,

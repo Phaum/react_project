@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import "../css/CreateAnnouncements.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import {baseBackendUrl} from "../../../shared/constants"
 
 const CreateAnnouncements = () => {
     const [title, setTitle] = useState("");
@@ -18,7 +19,7 @@ const CreateAnnouncements = () => {
         const fetchGroups = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch("http://localhost:5000/announcements/groups", {
+                const response = await fetch(`${baseBackendUrl}/announcements/groups`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!response.ok) {
@@ -57,7 +58,7 @@ const CreateAnnouncements = () => {
         if (image) formData.append("image", image);
         files.forEach(file => formData.append("files", file));
         try {
-            const response = await fetch("http://localhost:5000/announcements/create_announcements", {
+            const response = await fetch(`${baseBackendUrl}/announcements/create_announcements`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

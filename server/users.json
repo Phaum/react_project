@@ -4,19 +4,33 @@
     "username": "kirill",
     "password": "$2b$10$LgmGD849OMTW/Fgis8aDqujuMhEZHsrb8gHlydGMfEYNk/sQwEs.a",
     "role": "admin",
-    "group": "ISTARK"
+    "group": "admin"
   },
   {
     "id": "1737916439882",
     "username": "qwert1",
     "password": "$2b$10$JnkAh8qvBdIHv9xaMfDwceGTMShYgEen.rJWwcJoBsW8/4pzLW6b2",
     "role": "teacher",
-    "group": "none"
+    "group": "mentor"
   },
   {
     "id": "762d7eb2-d2ea-45e8-a4e4-66113e15028b",
     "username": "qwert2",
     "password": "$2b$10$rGjka7YY0lngdTQLshx4Du2Fkx10fj3NgrtfbDH4Z1lO7zO5g1Tyu",
+    "role": "student",
+    "group": "none"
+  },
+  {
+    "id": "1d360b22-928e-496d-9322-630edc43a746",
+    "username": "awdad",
+    "password": "$2b$10$4HeUxxsLeBiv5Hn4V4lWtO1BTTZSHukfOrG76h6a73MMQq9XhOVj.",
+    "role": "student",
+    "group": "none"
+  },
+  {
+    "id": "fcb2869c-fc1b-4206-bf99-401273b76803",
+    "username": "sdfsfsdf",
+    "password": "$2b$10$5yUOdBQqHXaDObgiYLJlauJTS5oxqpbMkHaR5wr1aQ9/ctsW3Bf.2",
     "role": "student",
     "group": "none"
   }

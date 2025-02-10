@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
     DesktopOutlined,
@@ -11,7 +11,9 @@ import {
     MoonOutlined,
     ContactsOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme, Button } from "antd";
+import { Layout, Menu, theme, Button, ConfigProvider } from "antd";
+import "./themes/light.less";
+import "./themes/dark.less";
 // Новости
 import News from "./pages/News/jsx/News";
 import CreateNews from "./pages/News/jsx/CreateNews";
@@ -37,6 +39,7 @@ import Files from "./pages/Files/Files";
 import Profile from "./pages/Profile/Profile";
 import Registration from "./pages/Authorization/Registration";
 import AdminPanel from "./pages/AdminPanel/jsx/AdminPanel"
+import MentorPanel from "./pages/AdminPanel/jsx/MentorPanel";
 // Таблица лидеров
 import RatingTable from "./pages/RatingTable/jsx/RatingTable";
 
@@ -62,29 +65,35 @@ const App = () => {
         { label: <Link to="/contacts">Контакты</Link>, key: "4", icon: <ContactsOutlined /> },
         { label: <Link to="/rating_table">Рейтинг</Link>, key: "5", icon: <TableOutlined /> },
         { label: <Link to="/profile">Профиль</Link>, key: "6", icon: <UserOutlined /> },
-        { label: <Button type="primary" onClick={toggleTheme}>
-                {themeMode === "light" ? "Темная" : "Светлая"} тема
-            </Button>, key: "7", icon: <MoonOutlined /> },
+        // { label: <Button type="primary" onClick={toggleTheme}>
+        //         {themeMode === "light" ? "Темная" : "Светлая"} тема
+        //     </Button>, key: "7", icon: <MoonOutlined /> },
         // { label: <Link to="/files">Файлы</Link>, key: "6", icon: <FileOutlined /> },
     ];
 
     return (
         <Router>
             <Layout style={{ minHeight: "100vh" }}>
-                {/* Левое боковое меню */}
-                <div style={{ position: "fixed" }} >
-
-                </div>
                 <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <div className="logo" style={{ padding: "20px", textAlign: "center", color: "#fff" }}>
-                        {!collapsed ? "Меню" : "🔹"}
+                    <div style={{ padding: "20px", textAlign: "center", color: "#fff" }}>
+                        {!collapsed ?
+                            <Button type="primary" onClick={toggleTheme}>
+                                {themeMode === "light" ? "Темная" : "Светлая"} тема
+                            </Button> :
+                            <Button type="primary" onClick={toggleTheme}>
+                                {themeMode === "light" ? <MoonOutlined /> : <MoonOutlined />}
+                            </Button>
+                        }
+
                     </div>
+
                     <Menu theme="dark" mode="inline" items={menuItems} />
                 </Sider>
 
                 <Layout>
                     {/* Верхняя панель */}
-                    <Header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px", background: colorBgContainer }}>
+                    <Header style={{
+                        display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px", background: colorBgContainer }}>
                         <h2>Тут будет название и логотип</h2>
                     </Header>
 
@@ -112,6 +121,7 @@ const App = () => {
                             <Route path="/registration" element={<Registration />} />
                             <Route path="/" element={<Registration />} />
                             <Route path="/admin-tools" element={<AdminPanel />} />
+                            <Route path={"/mentor-tools"} element={<MentorPanel />} />
                         </Routes>
                     </Content>
 

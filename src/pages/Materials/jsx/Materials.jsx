@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../css/Materials.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import { Card, Button, Typography, List, Space } from "antd";
+import {baseBackendUrl} from "../../../shared/constants"
+
 const { Title } = Typography;
 
 const Materials = () => {
@@ -16,8 +18,8 @@ const Materials = () => {
     const fetchMaterials = async () => {
         const token = getToken();
         const endpoint = token
-            ? "http://localhost:5000/materials/read"
-            : "http://localhost:5000/materials/read_guest";
+            ? `${baseBackendUrl}/materials/read`
+            : `${baseBackendUrl}/materials/read_guest`;
         try {
             const response = await fetch(endpoint, {
                 method: "GET",
@@ -44,7 +46,7 @@ const Materials = () => {
     const deleteMaterials = async (id) => {
         const token = getToken();
         try {
-            const response = await fetch(`http://localhost:5000/materials/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -102,18 +104,18 @@ const Materials = () => {
                             <Card
                                 title={<Link to={`/materials/${materials.id}`}><MarkdownRenderer content={materials.title}/></Link>}
                                 bordered
-                                extra={materials.canEdit && (
-                                    <Space>
+                            >
+                                <p>{`Дата публикации: ${formattedDate(materials.id)}` || "Описание материалы отсутствует"}</p>
+                                {materials.canEdit && (
+                                    <>
                                         <Link to={`/materials/edit/${materials.id}`}>
                                             <Button type="primary">Редактировать</Button>
                                         </Link>
                                         <Button danger onClick={() => deleteMaterials(materials.id)}>
                                             Удалить
                                         </Button>
-                                    </Space>
+                                    </>
                                 )}
-                            >
-                                <p>{`Дата публикации: ${formattedDate(materials.id)}` || "Описание материалы отсутствует"}</p>
                             </Card>
                         </List.Item>
                     )}

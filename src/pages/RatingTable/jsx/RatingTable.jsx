@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, InputNumber, Popconfirm, Form, Modal, Select, message } from "antd";
-const API_URL = "http://localhost:5000/ranking";
-const GROUPS_URL = "http://localhost:5000/ranking/groups";
+import {baseBackendUrl} from "../../../shared/constants"
+const API_URL = `${baseBackendUrl}/ranking`;
+const GROUPS_URL = `${baseBackendUrl}/ranking/groups`;
 
 const RatingTable = () => {
     const [ranking, setRanking] = useState([]);
@@ -145,16 +146,18 @@ const RatingTable = () => {
                     <span>{record.points}</span>
                 ),
         },
-        {
-            title: "Действия",
-            key: "actions",
-            render: (_, record) =>
-                record.canEdit ? (
-                    <Popconfirm title="Удалить команду?" onConfirm={() => deleteTeam(record.id)}>
-                        <Button danger>Удалить</Button>
-                    </Popconfirm>
-                ) : null,
-        },
+        ...(canEdit
+            ? [
+                {
+                    title: "Действия",
+                    key: "actions",
+                    render: (_, record) =>
+                        <Popconfirm title="Удалить команду?" onConfirm={() => deleteTeam(record.id)}>
+                            <Button danger>Удалить</Button>
+                        </Popconfirm>
+                },
+            ]
+            : []),
     ];
 
     return (

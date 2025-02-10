@@ -7,6 +7,7 @@ const { authenticateToken, authorizeRole } = require("./middleware");
 const markdownFolder = path.join(__dirname, "markdown-files-announcements");
 const uploadFolder = path.join(__dirname, "uploads-announcements")
 announcementsRouter.use("/uploads-announcements", express.static(uploadFolder));
+const {baseBackendUrl } = require("./shared/constants");
 
 if (!fs.existsSync(markdownFolder)) {
     fs.mkdirSync(markdownFolder);
@@ -252,10 +253,10 @@ announcementsRouter.get("/:id", authenticateToken, (req, res) => {
         // Определяем, может ли пользователь редактировать/удалять
         const canEdit = user.role === "teacher" || user.role === "admin";
         // Добавляем ссылку на изображение, если есть
-        const imageUrl = announcementsItem.image ? `http://localhost:5000/announcements/test-image/${path.basename(announcementsItem.image)}` : null;
+        const imageUrl = announcementsItem.image ? `${baseBackendUrl}/announcements/test-image/${path.basename(announcementsItem.image)}` : null;
         // Добавляем ссылки на файлы, если они есть
         const filesUrl = announcementsItem.files ? announcementsItem.files.map(file => ({
-            url: `http://localhost:5000/announcements/files/${path.basename(file)}`,
+            url: `${baseBackendUrl}/announcements/files/${path.basename(file)}`,
             name: file.split("_").slice(1).join("_")
         })) : [];
         let responseData = {

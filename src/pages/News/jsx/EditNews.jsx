@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
+import {baseBackendUrl} from "../../../shared/constants"
 
 const EditNews = () => {
     const { id } = useParams();
@@ -19,7 +20,7 @@ const EditNews = () => {
         const fetchNews = async () => {
             try {
                 const token = getToken();
-                const response = await fetch(`http://localhost:5000/news/${id}`, {
+                const response = await fetch(`${baseBackendUrl}/news/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -55,7 +56,7 @@ const EditNews = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/news/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/news/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -83,7 +84,7 @@ const EditNews = () => {
         formData.append("image", newImage);
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/news/${id}/upload_image`, {
+            const response = await fetch(`${baseBackendUrl}/news/${id}/upload_image`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -110,7 +111,7 @@ const EditNews = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/news/${id}/delete_image`, {
+            const response = await fetch(`${baseBackendUrl}/news/${id}/delete_image`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -140,7 +141,7 @@ const EditNews = () => {
         try {
             const token = localStorage.getItem("token");
             const filename = decodeURIComponent(fileUrl.split("/").pop());
-            const response = await fetch(`http://localhost:5000/news/${id}/${filename}`, {
+            const response = await fetch(`${baseBackendUrl}/news/${id}/${filename}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -169,7 +170,7 @@ const EditNews = () => {
         const formData = new FormData();
         newFiles.forEach((file) => formData.append("files", file));
         try {
-            const response = await fetch(`http://localhost:5000/news/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/news/${id}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

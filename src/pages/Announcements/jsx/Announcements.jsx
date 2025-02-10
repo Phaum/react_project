@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Announcements.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
-import { List, Card, Typography, Button, Space } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-const { Title, Paragraph } = Typography;
+import { List, Card, Typography, Button } from "antd";
+import {baseBackendUrl} from "../../../shared/constants"
+
+const { Title } = Typography;
 
 const Announcements = () => {
     const [announcementsList, setAnnouncementsList] = useState([]);
@@ -17,8 +18,8 @@ const Announcements = () => {
     const fetchAnnouncements = async () => {
         const token = getToken();
         const endpoint = token
-            ? "http://localhost:5000/announcements/read"
-            : "http://localhost:5000/announcements/read_guest";
+            ? `${baseBackendUrl}/announcements/read`
+            : `${baseBackendUrl}/announcements/read_guest`;
         try {
             const response = await fetch(endpoint, {
                 method: "GET",
@@ -49,7 +50,7 @@ const Announcements = () => {
     const deleteAnnouncements = async (id) => {
         const token = getToken();
         try {
-            const response = await fetch(`http://localhost:5000/announcements/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/announcements/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -107,18 +108,29 @@ const Announcements = () => {
                             <Card
                                 title={<Link to={`/announcements/${announcements.id}`}><MarkdownRenderer content={announcements.title}/></Link>}
                                 bordered
-                                extra={announcements.canEdit && (
-                                    <Space>
+                                // extra={announcements.canEdit && (
+                                //     <Space>
+                                //         <Link to={`/announcements/edit/${announcements.id}`}>
+                                //             <Button type="primary">Редактировать</Button>
+                                //         </Link>
+                                //         <Button danger onClick={() => deleteAnnouncements(announcements.id)}>
+                                //             Удалить
+                                //         </Button>
+                                //     </Space>
+                                // )}
+                            >
+                                <p>{`Дата публикации: ${formattedDate(announcements.id)}` || "Описание объявления отсутствует"}</p>
+                                {announcements.canEdit && (
+                                    <>
                                         <Link to={`/announcements/edit/${announcements.id}`}>
                                             <Button type="primary">Редактировать</Button>
                                         </Link>
                                         <Button danger onClick={() => deleteAnnouncements(announcements.id)}>
                                             Удалить
                                         </Button>
-                                    </Space>
+                                    </>
+
                                 )}
-                            >
-                                <p>{`Дата публикации: ${formattedDate(announcements.id)}` || "Описание объявления отсутствует"}</p>
                             </Card>
                         </List.Item>
                     )}

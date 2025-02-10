@@ -4,7 +4,9 @@ import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 import "../css/AnnouncementsDetail.css";
 import { Card, Typography, Button, Space, Image, List } from "antd";
-import {DownloadOutlined, EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined} from "@ant-design/icons";
+import {EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined} from "@ant-design/icons";
+import {baseBackendUrl} from "../../../shared/constants"
+
 const { Title, Paragraph } = Typography;
 
 const AnnouncementsDetail = () => {
@@ -19,10 +21,10 @@ const AnnouncementsDetail = () => {
         const fetchAnnouncementsDetail = async () => {
             const token = getToken();
             const endpoint = token
-                ? "http://localhost:5000/announcements/read"
-                : "http://localhost:5000/announcements/read_guest";
+                ? `${baseBackendUrl}/announcements/read`
+                : `${baseBackendUrl}/announcements/read_guest`;
             try {
-                const response = await fetch(`http://localhost:5000/announcements/${id}`, {
+                const response = await fetch(`${baseBackendUrl}/announcements/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -51,7 +53,7 @@ const AnnouncementsDetail = () => {
         const token = getToken();
 
         try {
-            const response = await fetch(`http://localhost:5000/announcements/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/announcements/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,

@@ -7,6 +7,7 @@ const { authenticateToken, authorizeRole } = require("./middleware");
 const markdownFolder = path.join(__dirname, "markdown-files-materials");
 const uploadFolder = path.join(__dirname, "uploads-materials")
 materialsRouter.use("/uploads-materials", express.static(uploadFolder));
+const {baseBackendUrl } = require("./shared/constants");
 
 if (!fs.existsSync(markdownFolder)) {
     fs.mkdirSync(markdownFolder);
@@ -235,10 +236,10 @@ materialsRouter.get("/:id", authenticateToken, (req, res) => {
         // Определяем, может ли пользователь редактировать/удалять
         const canEdit = user.role === "teacher" || user.role === "admin";
         // Добавляем ссылку на изображение, если есть
-        const imageUrl = materialsItem.image ? `http://localhost:5000/materials/test-image/${path.basename(materialsItem.image)}` : null;
+        const imageUrl = materialsItem.image ? `${baseBackendUrl}/materials/test-image/${path.basename(materialsItem.image)}` : null;
         // Добавляем ссылки на файлы, если они есть
         const filesUrl = materialsItem.files ? materialsItem.files.map(file => ({
-            url: `http://localhost:5000/materials/files/${path.basename(file)}`,
+            url: `${baseBackendUrl}/materials/files/${path.basename(file)}`,
             name: file.split("_").slice(1).join("_")
         })) : [];
         let responseData = {
@@ -616,9 +617,9 @@ materialsRouter.get("/:id/articles", authenticateToken , (req, res) => {
 //             id: article.id,
 //             title: article.title,
 //             content,
-//             image: article.image ? `http://localhost:5000/materials/test-image/${path.basename(article.image)}` : null,
+//             image: article.image ? `${baseBackendUrl}/materials/test-image/${path.basename(article.image)}` : null,
 //             files: article.files.map(file => ({
-//                 url: `http://localhost:5000/materials/files/${path.basename(file)}`,
+//                 url: `${baseBackendUrl}/materials/files/${path.basename(file)}`,
 //                 name: file.split("_").slice(1).join("_")
 //             }))
 //         };
@@ -680,10 +681,10 @@ materialsRouter.get("/:id/articles/:articleId", authenticateToken , (req, res) =
             id: article.id,
             title: article.title,
             content,
-            image: article.image ? `http://localhost:5000/materials/test-image/${path.basename(article.image)}` : null,
+            image: article.image ? `${baseBackendUrl}/materials/test-image/${path.basename(article.image)}` : null,
             files: article.files
                 ? article.files.map((file) => ({
-                    url: `http://localhost:5000/materials/files/${path.basename(file)}`,
+                    url: `${baseBackendUrl}/materials/files/${path.basename(file)}`,
                     name: file.split("_").slice(1).join("_"),
                 }))
                 : [], // Если файлов нет, передаём пустой массив

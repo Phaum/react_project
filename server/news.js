@@ -7,6 +7,7 @@ const { authenticateToken, authorizeRole } = require("./middleware");
 const markdownFolder = path.join(__dirname, "markdown-files-news");
 const uploadFolder = path.join(__dirname, "uploads-news");
 newsRouter.use("/uploads-news", express.static(uploadFolder));
+const {baseBackendUrl } = require("./shared/constants");
 
 if (!fs.existsSync(markdownFolder)) {
     fs.mkdirSync(markdownFolder);
@@ -127,10 +128,10 @@ newsRouter.get("/read", authenticateToken, (req, res) => {
 //             return res.status(403).json({ message: "У вас нет доступа к этой новости" });
 //         }
 //         // Добавляем ссылку на изображение, если есть
-//         const imageUrl = newsItem.image ? `http://localhost:5000/news/test-image/${path.basename(newsItem.image)}` : null;
+//         const imageUrl = newsItem.image ? `${baseBackendUrl}/news/test-image/${path.basename(newsItem.image)}` : null;
 //         // Добавляем ссылки на файлы, если есть
 //         const filesUrl = newsItem.files ? newsItem.files.map(file => ({
-//             url: `http://localhost:5000/news/files/${path.basename(file)}`,
+//             url: `${baseBackendUrl}/news/files/${path.basename(file)}`,
 //             name: file.split("_").slice(1).join("_")
 //         })) : [];
 //         // Формируем ответ
@@ -184,10 +185,10 @@ newsRouter.use("/files", express.static(uploadFolder));
 //             return res.status(404).json({ message: "Новость не найдена в индексе" });
 //         }
 //         // Добавляем ссылку на изображение, если есть
-//         const imageUrl = newsItem.image ? `http://localhost:5000/news/test-image/${path.basename(newsItem.image)}` : null;
+//         const imageUrl = newsItem.image ? `${baseBackendUrl}/news/test-image/${path.basename(newsItem.image)}` : null;
 //         // Добавляем ссылки на файлы, если они есть
 //         const filesUrl = newsItem.files ? newsItem.files.map(file => ({
-//             url: `http://localhost:5000/news/files/${path.basename(file)}`,
+//             url: `${baseBackendUrl}/news/files/${path.basename(file)}`,
 //             name: file.split("_").slice(1).join("_")
 //         })) : [];
 //         let responseData = {
@@ -238,10 +239,10 @@ newsRouter.get("/:id", authenticateToken,(req, res) => {
         // Определяем, может ли пользователь редактировать/удалять
         const canEdit = user.role === "teacher" || user.role === "admin";
         // Добавляем ссылку на изображение, если есть
-        const imageUrl = newsItem.image ? `http://localhost:5000/news/test-image/${path.basename(newsItem.image)}` : null;
+        const imageUrl = newsItem.image ? `${baseBackendUrl}/news/test-image/${path.basename(newsItem.image)}` : null;
         // Добавляем ссылки на файлы, если они есть
         const filesUrl = newsItem.files ? newsItem.files.map(file => ({
-            url: `http://localhost:5000/news/files/${path.basename(file)}`,
+            url: `${baseBackendUrl}/news/files/${path.basename(file)}`,
             name: file.split("_").slice(1).join("_")
         })) : [];
         let responseData = {

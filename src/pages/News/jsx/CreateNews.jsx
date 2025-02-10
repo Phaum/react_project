@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import "../css/CreateNews.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
-import DownloadFile from "../../../UI/jsx/DownloadFile";
+import {baseBackendUrl} from "../../../shared/constants"
 
 const CreateNews = () => {
     const [title, setTitle] = useState("");
@@ -39,7 +39,7 @@ const CreateNews = () => {
         if (image) formData.append("image", image);
         files.forEach(file => formData.append("files", file));
         try {
-            const response = await fetch("http://localhost:5000/news/create_news", {
+            const response = await fetch(`${baseBackendUrl}/news/create_news`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

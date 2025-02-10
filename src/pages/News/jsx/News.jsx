@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../css/News.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import { Card, Button, Typography, List, Space } from "antd";
+import {baseBackendUrl} from "../../../shared/constants"
+
 const { Title } = Typography;
 
 const News = () => {
@@ -14,8 +16,8 @@ const News = () => {
     const fetchNews = async () => {
         const token = getToken();
         const endpoint = token
-            ? "http://localhost:5000/news/read"
-            : "http://localhost:5000/news/read_guest";
+            ? `${baseBackendUrl}/news/read`
+            : `${baseBackendUrl}/news/read_guest`;
         try {
             const response = await fetch(endpoint, {
                 method: "GET",
@@ -43,7 +45,7 @@ const News = () => {
     const deleteNews = async (id) => {
         const token = getToken();
         try {
-            const response = await fetch(`http://localhost:5000/news/${id}`, {
+            const response = await fetch(`${baseBackendUrl}/news/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -106,7 +108,9 @@ const News = () => {
                             {news.canEdit && (
                             <>
                                 <Link to={`/news/edit/${news.id}`}>
-                                    <Button type="primary">Редактировать</Button>
+                                    <Button type="primary" >
+                                        Редактировать
+                                    </Button>
                                 </Link>
                                 <Button danger onClick={() => deleteNews(news.id)}>
                                     Удалить

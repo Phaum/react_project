@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Table, Input, Select, Button, Form, Popconfirm, message, Modal } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import {baseBackendUrl} from "../../../shared/constants"
-
 const { Option } = Select;
 
-const AdminPanel = () => {
+const MentorPanel = () => {
     const [users, setUsers] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,6 +12,7 @@ const AdminPanel = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
     const token = localStorage.getItem("token");
+
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
 
@@ -22,8 +21,8 @@ const AdminPanel = () => {
             try {
                 const token = localStorage.getItem("token");
                 const [usersResponse, groupsResponse] = await Promise.all([
-                    fetch(`${baseBackendUrl}/admin-tools`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch(`${baseBackendUrl}/admin-tools/groups`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch("http://localhost:5000/admin-tools", { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch("http://localhost:5000/admin-tools/groups", { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
                 if (!usersResponse.ok || !groupsResponse.ok) {
                     throw new Error("Ошибка при загрузке данных");
@@ -43,7 +42,7 @@ const AdminPanel = () => {
 
     const deleteUser = async (id) => {
         try {
-            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}`, {
+            const response = await fetch(`http://localhost:5000/admin-tools/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -58,7 +57,7 @@ const AdminPanel = () => {
 
     const updateUser = async (id, updatedUser) => {
         try {
-            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}`, {
+            const response = await fetch(`http://localhost:5000/admin-tools/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -78,7 +77,7 @@ const AdminPanel = () => {
 
     const updateUserGroup = async (id, newGroup) => {
         try {
-            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}/group`, {
+            const response = await fetch(`http://localhost:5000/admin-tools/${id}/group`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -103,7 +102,7 @@ const AdminPanel = () => {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`${baseBackendUrl}/admin-tools/${id}/reset-password`, {
+            const response = await fetch(`http://localhost:5000/admin-tools/${id}/reset-password`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -126,7 +125,7 @@ const AdminPanel = () => {
             return;
         }
         try {
-            const response = await fetch(`${baseBackendUrl}/admin-tools/groups`, {
+            const response = await fetch("http://localhost:5000/admin-tools/groups", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -157,7 +156,7 @@ const AdminPanel = () => {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`${baseBackendUrl}/admin-tools/create`, {
+            const response = await fetch("http://localhost:5000/admin-tools/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -183,7 +182,7 @@ const AdminPanel = () => {
             return;
         }
         try {
-            const response = await fetch(`${baseBackendUrl}/admin-tools/groups/${groupName}`, {
+            const response = await fetch(`http://localhost:5000/admin-tools/groups/${groupName}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -253,6 +252,7 @@ const AdminPanel = () => {
             onFilter: (value, record) => record.username.toLowerCase().includes(value.toLowerCase()),
             render: (text, record) => (
                 <Input
+                    readOnly
                     value={text}
                     onChange={(e) =>
                         setUsers((prev) =>
@@ -272,6 +272,7 @@ const AdminPanel = () => {
             render: (text, record) => (
                 <Select
                     value={text}
+                    disabled={text === "admin" || text === "teacher"}
                     onChange={(value) =>
                         setUsers((prev) =>
                             prev.map((u) => (u.id === record.id ? { ...u, role: value } : u))
@@ -279,28 +280,13 @@ const AdminPanel = () => {
                     }
                     style={{ width: 120 }}
                 >
-                    <Option value="admin">Админ</Option>
-                    <Option value="teacher">Ментор</Option>
+                    <Option value="admin" disabled={true}>Админ</Option>
+                    <Option value="teacher" disabled={true}>Ментор</Option>
                     <Option value="student">Студент</Option>
                     <Option value="user">Пользователь</Option>
                 </Select>
             ),
         },
-        // {
-        //     title: "Группа",
-        //     dataIndex: "group",
-        //     key: "group",
-        //     sorter: (a, b) => a.group.localeCompare(b.group),
-        //     render: (text, record) => (
-        //         <Select value={text} onChange={(value) => updateUserGroup(record.id, value)} style={{ width: 120 }}>
-        //             {groups.map((group) => (
-        //                 <Option key={group} value={group}>
-        //                     {group}
-        //                 </Option>
-        //             ))}
-        //         </Select>
-        //     ),
-        // },
         {
             title: "Группа",
             dataIndex: "group",
@@ -339,6 +325,7 @@ const AdminPanel = () => {
             onFilter: (value, record) => record.group === value,
             render: (text, record) => (
                 <Select
+                    disabled={text === "admin" || text === "mentor"}
                     value={text}
                     onChange={(value) => updateUser(record.id, { ...record, group: value })}
                     style={{ width: 120 }}
@@ -349,23 +336,6 @@ const AdminPanel = () => {
                         </Select.Option>
                     ))}
                 </Select>
-            ),
-        },
-        {
-            title: "Действия",
-            key: "actions",
-            render: (_, record) => (
-                <>
-                    <Button onClick={() => resetPassword(record.id)} style={{ marginRight: 8 }}>
-                        Изменить пароль
-                    </Button>
-                    <Button type="primary" onClick={() => updateUser(record.id, record)} style={{ marginRight: 8 }}>
-                        Сохранить
-                    </Button>
-                    <Popconfirm title="Удалить пользователя?" onConfirm={() => deleteUser(record.id)}>
-                        <Button danger>Удалить</Button>
-                    </Popconfirm>
-                </>
             ),
         },
     ];
@@ -388,7 +358,7 @@ const AdminPanel = () => {
 
     return (
         <div style={{ padding: 20 }}>
-            <h1>Администратор: управление пользователями</h1>
+            <h1>Ментор: управление пользователями</h1>
             <Table columns={userColumns} dataSource={users} rowKey="id" pagination={{ pageSize: 5 }} />
             <h2>Добавить новую группу</h2>
             <Input
@@ -402,46 +372,15 @@ const AdminPanel = () => {
             </Button>
             <Table
                 columns={groupColumns}
-                dataSource={groups.map((name) => ({ name }))}
+                dataSource={groups
+                    .filter(name => name !== "admin" && name !== "mentor")
+                    .map(name => ({ name }))}
                 rowKey="name"
                 pagination={false}
                 style={{ marginTop: 20 }}
             />
-            <Button type="primary" onClick={showModal} style={{ marginTop: 20 }}>
-                Добавить пользователя
-            </Button>
-            <Modal title="Добавить пользователя" open={isModalOpen} onCancel={handleCancel} footer={null}>
-                <Form layout="vertical" form={form} onFinish={handleCreateUser}>
-                    <Form.Item label="Имя пользователя" name="username" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Пароль" name="password" rules={[{ required: true }]}>
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item label="Роль" name="role" rules={[{ required: true }]}>
-                        <Select>
-                            <Option value="user">Пользователь</Option>
-                            <Option value="student">Студент</Option>
-                            <Option value="teacher">Учитель</Option>
-                            <Option value="admin">Администратор</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Группа" name="group" rules={[{ required: true }]}>
-                        <Select>
-                            {groups.map((g) => (
-                                <Option key={g} value={g}>
-                                    {g}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Создать
-                    </Button>
-                </Form>
-            </Modal>
         </div>
     );
 };
 
-export default AdminPanel;
+export default MentorPanel;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Form, Input, Button, Typography, Alert } from "antd";
+import {baseBackendUrl} from "../../shared/constants"
 
 const { Title, Text, Link } = Typography;
 
@@ -18,7 +19,7 @@ const AuthPage = () => {
 
     const verifyToken = async (token) => {
         try {
-            const response = await fetch("http://localhost:5000/registration/verify", {
+            const response = await fetch(`${baseBackendUrl}/registration/verify`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,8 +39,8 @@ const AuthPage = () => {
     const handleSubmit = async (values) => {
         try {
             const endpoint = isRegister
-                ? "http://localhost:5000/registration/register"
-                : "http://localhost:5000/registration/login";
+                ? `${baseBackendUrl}/registration/register`
+                : `${baseBackendUrl}/registration/login`;
 
             const response = await fetch(endpoint, {
                 method: "POST",

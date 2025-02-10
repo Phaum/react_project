@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
+import {baseBackendUrl} from "../../../shared/constants"
 
 const EditArticle = () => {
     const { id, articleId } = useParams();
@@ -19,7 +20,7 @@ const EditArticle = () => {
         const fetchArticle = async () => {
             try {
                 const token = getToken();
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+                const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -45,7 +46,7 @@ const EditArticle = () => {
         e.preventDefault();
         const token = localStorage.getItem("token");
         try {
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -67,7 +68,7 @@ const EditArticle = () => {
         formData.append("image", newImage);
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}/upload_image`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}/upload_image`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -94,7 +95,7 @@ const EditArticle = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}/delete_image`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}/delete_image`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -124,7 +125,7 @@ const EditArticle = () => {
         try {
             const token = localStorage.getItem("token");
             const filename = decodeURIComponent(fileUrl.split("/").pop());
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}/${filename}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}/${filename}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -153,7 +154,7 @@ const EditArticle = () => {
         const formData = new FormData();
         newFiles.forEach((file) => formData.append("files", file));
         try {
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}/upload_files`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}/upload_files`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

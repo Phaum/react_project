@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import "../css/CreateMaterials.css";
 import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
+import {baseFrontEndUrl, baseBackendUrl} from "../../../shared/constants"
 
 const CreateMaterials = () => {
     const [title, setTitle] = useState("");
@@ -18,7 +19,7 @@ const CreateMaterials = () => {
         const fetchGroups = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch("http://localhost:5000/materials/groups", {
+                const response = await fetch(`${baseBackendUrl}/materials/groups`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!response.ok) {
@@ -57,7 +58,7 @@ const CreateMaterials = () => {
         if (image) formData.append("image", image);
         files.forEach(file => formData.append("files", file));
         try {
-            const response = await fetch("http://localhost:5000/materials/create_materials", {
+            const response = await fetch(`${baseBackendUrl}/materials/create_materials`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

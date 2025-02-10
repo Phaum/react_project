@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, Typography, Button, Space } from "antd";
 import { LogoutOutlined, ToolOutlined, BookOutlined, DashboardOutlined } from "@ant-design/icons";
+import {baseBackendUrl} from "../../shared/constants"
+
 const { Title, Text, Link: AntLink } = Typography;
 
 const Profile = () => {
@@ -19,7 +21,7 @@ const Profile = () => {
                 return;
             }
             try {
-                const response = await fetch("http://localhost:5000/registration/verify", {
+                const response = await fetch(`${baseBackendUrl}/registration/verify`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -58,15 +60,15 @@ const Profile = () => {
     return (
         <Card style={{ maxWidth: 400, margin: "0 auto", textAlign: "center" }}>
             <Title level={2}>Профиль</Title>
-            <Text strong>Добро пожаловать, {username}!</Text>
+            <Text strong>Добро пожаловать, {username}</Text>
             <br />
-            <Text>Ваша роль:{" "}
+            <Text strong>Ваша роль:{" "}
                 {role === "admin" ? "Администратор" :
-                    role === "teacher" ? "Преподаватель" :
-                        role === "student" ? "Студент" : "Гость"}.
+                    role === "teacher" ? "Ментор" :
+                        role === "student" ? "Студент" : "Гость"}
             </Text>
             <br />
-            <Text>Ваша группа: {group}</Text>
+            <Text strong>Ваша группа: {group}</Text>
             <br />
             <Space direction="vertical" style={{ marginTop: 16 }}>
                 {role === "admin" && (
@@ -74,14 +76,14 @@ const Profile = () => {
                         <Link to="/admin-tools">
                             <Button type="primary" icon={<DashboardOutlined />}>Панель администратора</Button>
                         </Link>
-                        <Link to="/teacher-tools">
-                            <Button type="default" icon={<ToolOutlined />}>Инструменты преподавателя</Button>
+                        <Link to="/mentor-tools">
+                            <Button type="default" icon={<ToolOutlined />}>Инструменты ментора</Button>
                         </Link>
                     </>
                 )}
                 {role === "teacher" && (
-                    <Link to="/teacher-tools">
-                        <Button type="default" icon={<ToolOutlined />}>Инструменты преподавателя</Button>
+                    <Link to="/mentor-tools">
+                        <Button type="default" icon={<ToolOutlined />}>Инструменты ментора</Button>
                     </Link>
                 )}
                 {role === "student" && group !== "none" && (

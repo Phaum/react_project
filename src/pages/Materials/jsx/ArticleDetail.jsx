@@ -4,6 +4,8 @@ import MarkdownRenderer from "../../../UI/jsx/MarkdownRenderer";
 import DownloadFile from "../../../UI/jsx/DownloadFile";
 import { Card, Typography, List, Button, Space } from "antd";
 import { EditOutlined, DeleteOutlined, ArrowLeftOutlined, FileOutlined } from "@ant-design/icons";
+import {baseBackendUrl} from "../../../shared/constants"
+
 const { Title, Paragraph } = Typography;
 
 const ArticleDetail = () => {
@@ -18,7 +20,7 @@ const ArticleDetail = () => {
         const fetchArticle = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+                const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -36,7 +38,7 @@ const ArticleDetail = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/materials/${id}/articles/${articleId}`, {
+            const response = await fetch(`${baseBackendUrl}/materials/${id}/articles/${articleId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

@@ -1,10 +1,147 @@
-@import "antd/dist/reset.css";
-
-@primary-color: #ff4d4f;
-@body-background: #1f1f1f;
-@text-color: #ffffff;
-
 [data-theme="dark"] {
-  background-color: @body-background;
-  color: @text-color;
+  --primary-color: #1890ff;
+  --bg-color: #141414;
+  --text-color: #ffffff;
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+
+  .ant-layout {
+    background: var(--bg-color);
+  }
+
+  .ant-layout-header {
+    background-color: #141414 !important;
+    color: #ffffff !important;
+  }
+
+  .ant-layout-content {
+    background-color: #141414 !important;
+    color: #ffffff !important;
+  }
+
+  .ant-layout-footer {
+    background-color: #141414 !important;
+    color: #ffffff !important;
+  }
+
+  .ant-typography {
+    color: #ffffff !important;
+  }
+
+  .ant-typography h1 {
+    color: #ffffff !important;
+  }
+
+  .ant-typography h2 {
+    color: #ffffff !important;
+  }
+
+  .ant-typography h3 {
+    color: #ffffff !important;
+  }
+
+  .ant-typography h4 {
+    color: #ffffff !important;
+  }
+
+  .ant-typography h5 {
+    color: #ffffff !important;
+  }
+
+  .markdown-container {
+    color: #ffffff !important;
+  }
+
+  .ant-card {
+    background: #1f1f1f;
+    color: #ffffff;
+    border-color: #1f1f1f;
+  }
+
+  .ant-btn {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-card .ant-card-head {
+    color: #ffffff;
+  }
+
+  .anticon {
+    color: #ffffff !important;
+  }
+
+  .ant-table-content {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-table-wrapper .ant-table-thead >tr>th {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-table-wrapper .ant-table {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-input-number-outlined {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-form-item .ant-form-item-label >label {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-input-number .ant-input-number-input {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-pagination .ant-pagination-item-active a {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-pagination .ant-pagination-item-active {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .ant-pagination .ant-pagination-item-active {
+    border-color: #1f1f1f;
+  }
+
+  .ant-btn-color-primary {
+    box-shadow: 0 0 0;
+    border-color: #4d89ff;
+  }
+
+  .ant-btn-color-dangerous {
+    border-color: #ff4d4f
+  }
+
+  .ant-layout-sider {
+    background: #1f1f1f;
+  }
+
+  .ant-layout-sider-trigger {
+    background: #1f1f1f;
+  }
+
+  .ant-menu {
+    background: #1f1f1f;
+  }
+
+  .ant-menu-dark .ant-menu-item-selected {
+    background: #2A2A29;
+    border-color: #4d89ff;
+    border-radius: 6px;
+  }
 }
