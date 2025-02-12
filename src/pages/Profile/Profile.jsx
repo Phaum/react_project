@@ -7,7 +7,7 @@ import {baseBackendUrl} from "../../shared/constants"
 const { Title, Text, Link: AntLink } = Typography;
 
 const Profile = () => {
-    const [username, setUsername] = useState('');
+    const [login, setUsername] = useState('');
     const [role, setRole] = useState('');
     const [group, setGroup] = useState('');
     const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ const Profile = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    setUsername(data.username);
+                    setUsername(data.login);
                     setRole(data.role);
                     setGroup(data.group);
                 } else {
@@ -60,7 +60,7 @@ const Profile = () => {
     return (
         <Card style={{ maxWidth: 400, margin: "0 auto", textAlign: "center" }}>
             <Title level={2}>Профиль</Title>
-            <Text strong>Добро пожаловать, {username}</Text>
+            <Text strong>Добро пожаловать, {login}</Text>
             <br />
             <Text strong>Ваша роль:{" "}
                 {role === "admin" ? "Администратор" :

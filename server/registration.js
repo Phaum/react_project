@@ -17,7 +17,7 @@ const registrationRouter = express.Router();
 registrationRouter.post(
     "/register",
     [
-        body("username").isLength({ min: 3 }).withMessage("Имя пользователя должно быть не менее 3 символов"),
+        body("login").isLength({ min: 3 }).withMessage("Логин пользователя должен быть не менее 3 символов"),
         body("password").isLength({ min: 6 }).withMessage("Пароль должен быть не менее 6 символов"),
     ],
     async (req, res) => {
@@ -25,18 +25,21 @@ registrationRouter.post(
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { username, password } = req.body;
+        const { login,username,lastName,stud_group,password } = req.body;
         try {
             const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
             // Проверяем существование пользователя
-            const existingUser = users.find((user) => user.username === username);
+            const existingUser = users.find((user) => user.login === login);
             if (existingUser) {
                 return res.status(400).send("Пользователь с таким именем уже существует");
             }
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = {
                 id: Date.now().toString(),
+                login,
                 username,
+                lastName,
+                stud_group,
                 password: hashedPassword,
                 role: "user", // Роль по умолчанию
                 group: "none", // Группа по умолчанию
@@ -53,10 +56,10 @@ registrationRouter.post(
 
 // Авторизация пользователя
 registrationRouter.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+    const { login, password } = req.body;
     try {
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
-        const user = users.find((u) => u.username === username);
+        const user = users.find((u) => u.login === login);
         if (!user) {
             return res.status(401).send("Неверное имя пользователя или пароль");
         }
@@ -65,7 +68,7 @@ registrationRouter.post("/login", async (req, res) => {
             return res.status(401).send("Неверное имя пользователя или пароль");
         }
         const token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, { expiresIn: "1h" });
-        res.json({ token, role: user.role, username: user.username });
+        res.json({ token, role: user.role, login: user.login });
     } catch (err) {
         console.error("Ошибка при авторизации пользователя:", err);
         res.status(500).send("Произошла ошибка при авторизации");
@@ -86,7 +89,7 @@ registrationRouter.post("/verify", (req, res) => {
         // const usersFile = path.join(__dirname, "users.json");
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === decoded.id);
-        res.json({ username: user.username, role: user.role, group: user.group }); // Возвращаем данные из токена
+        res.json({ login: user.login, role: user.role, group: user.group }); // Возвращаем данные из токена
     });
 });
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Table, Button, InputNumber, Popconfirm, Form, Modal, Select, message } from "antd";
 import {baseBackendUrl} from "../../../shared/constants"
 const API_URL = `${baseBackendUrl}/ranking`;
@@ -11,6 +12,7 @@ const RatingTable = () => {
     const [groups, setGroups] = useState([]);
     const [newTeam, setNewTeam] = useState({ group: "", points: 0 });
     const [canEdit, setCanEdit] = useState(false);
+    const navigate = useNavigate();
     const getToken = () => localStorage.getItem("token");
 
     useEffect(() => {
@@ -31,6 +33,7 @@ const RatingTable = () => {
             });
             if (response.status === 403) {
                 throw new Error("Ошибка доступа: нет прав на просмотр рейтинга.");
+                navigate("/registration");
             }
             const data = await response.json();
             if (!Array.isArray(data)) {
@@ -45,6 +48,7 @@ const RatingTable = () => {
             }
         } catch (error) {
             console.error("Ошибка загрузки рейтинга:", error);
+            navigate("/registration");
             setRanking([]);
         }
         setLoading(false);

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Form, Input, Button, Typography, Alert } from "antd";
+import { Card, Form, Input, Button, Typography, Alert, Select } from "antd";
 import {baseBackendUrl} from "../../shared/constants"
 
 const { Title, Text, Link } = Typography;
+const { Option } = Select;
 
 const AuthPage = () => {
     const [isRegister, setIsRegister] = useState(false);
@@ -77,12 +78,42 @@ const AuthPage = () => {
             <Title level={2}>{isRegister ? "Регистрация" : "Вход"}</Title>
 
             <Form layout="vertical" onFinish={handleSubmit}>
+
+                {isRegister && (
+                    <>
+                        <Form.Item
+                            label="Студенческая группа"
+                            name="stud_group"
+                            rules={[{ required: true, message: "Выберите вашу студенческую группу!" }]}
+                        >
+                            <Input placeholder="Введите вашу группу" />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Имя"
+                            name="username"
+                            rules={[{ required: true, message: "Введите ваше имя!" }]}
+                        >
+                            <Input placeholder="Введите ваше имя" />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Фамилия"
+                            name="lastName"
+                            rules={[{ required: isRegister, message: "Введите вашу фамилию!" }]}
+                        >
+                            <Input placeholder="Введите вашу фамилию" />
+                        </Form.Item>
+                    </>
+
+                )}
+
                 <Form.Item
-                    label="Имя пользователя"
-                    name="username"
-                    rules={[{ required: true, message: "Введите имя пользователя!" }]}
+                    label="Логин"
+                    name="login"
+                    rules={[{ required: true, message: "Введите логин!" }]}
                 >
-                    <Input placeholder="Введите имя" />
+                    <Input placeholder="Введите логин" />
                 </Form.Item>
 
                 <Form.Item
@@ -92,6 +123,7 @@ const AuthPage = () => {
                 >
                     <Input.Password placeholder="Введите пароль" />
                 </Form.Item>
+
 
                 {error && <Alert message={error} type="error" showIcon style={{ marginBottom: 10 }} />}
 

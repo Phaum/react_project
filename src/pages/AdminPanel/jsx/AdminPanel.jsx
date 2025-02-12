@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Table, Input, Select, Button, Form, Popconfirm, message, Modal } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { exportToExcel } from "../../../UI/jsx/ExportToExcel";
 import {baseBackendUrl} from "../../../shared/constants"
 
 const { Option } = Select;
@@ -340,12 +341,12 @@ const AdminPanel = () => {
             render: (text, record) => (
                 <Select
                     value={text}
-                    onChange={(value) => updateUser(record.id, { ...record, group: value })}
+                    onChange={(value) => updateUserGroup(record.id, value)}
                     style={{ width: 120 }}
                 >
-                    {groups.map((g) => (
-                        <Select.Option key={g} value={g}>
-                            {g}
+                    {groups.map((group) => (
+                        <Select.Option key={group} value={group}>
+                            {group}
                         </Select.Option>
                     ))}
                 </Select>
@@ -390,6 +391,9 @@ const AdminPanel = () => {
         <div style={{ padding: 20 }}>
             <h1>Администратор: управление пользователями</h1>
             <Table columns={userColumns} dataSource={users} rowKey="id" pagination={{ pageSize: 5 }} />
+            <Button type="primary" onClick={() => exportToExcel(users, "users_data")} style={{ marginBottom: 16 }}>
+                Экспорт в Excel
+            </Button>
             <h2>Добавить новую группу</h2>
             <Input
                 placeholder="Введите название группы"

@@ -6,9 +6,22 @@
   <component name="ChangeListManager">
     <list default="true" id="cbce3130-25b5-488e-ac26-4b3607cd5d6e" name="Changes" comment="">
       <changelist_data name="Phaum" email="" automatic="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/jsx/ExportToExcel.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/materials.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/materials.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/groups.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/groups.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/logs/user-actions.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/logs/user-actions.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/registration.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/registration.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/users.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/AdminPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/AdminPanel.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/MentorPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/AdminPanel/jsx/MentorPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Authorization/Registration.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Authorization/Registration.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Profile/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Profile/Profile.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/RatingTable/jsx/RatingTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/RatingTable/jsx/RatingTable.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/themes/dark.less" beforeDir="false" afterPath="$PROJECT_DIR$/src/themes/dark.less" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +87,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737725600200</updated>
-      <workItem from="1737725601244" duration="274420000" />
+      <workItem from="1737725601244" duration="285448000" />
     </task>
     <servers />
   </component>

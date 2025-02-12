@@ -62,13 +62,9 @@ const App = () => {
         { label: <Link to="/news">Новости</Link>, key: "1", icon: <HomeOutlined /> },
         { label: <Link to="/announcements">Объявления</Link>, key: "2", icon: <NotificationOutlined /> },
         { label: <Link to="/materials">Материалы</Link>, key: "3", icon: <ReadOutlined /> },
-        { label: <Link to="/contacts">Контакты</Link>, key: "4", icon: <ContactsOutlined /> },
         { label: <Link to="/rating_table">Рейтинг</Link>, key: "5", icon: <TableOutlined /> },
+        { label: <Link to="/contacts">Контакты</Link>, key: "4", icon: <ContactsOutlined /> },
         { label: <Link to="/profile">Профиль</Link>, key: "6", icon: <UserOutlined /> },
-        // { label: <Button type="primary" onClick={toggleTheme}>
-        //         {themeMode === "light" ? "Темная" : "Светлая"} тема
-        //     </Button>, key: "7", icon: <MoonOutlined /> },
-        // { label: <Link to="/files">Файлы</Link>, key: "6", icon: <FileOutlined /> },
     ];
 
     return (
@@ -94,9 +90,14 @@ const App = () => {
                     {/* Верхняя панель */}
                     <Header style={{
                         display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px", background: colorBgContainer }}>
-                        <h2>Тут будет название и логотип</h2>
+                        <h2>Code.ak</h2>
+                        {/*<img src={`${process.env.PUBLIC_URL}/icon.png`} alt="Logo" style={{ height: "40px" }} />*/}
+                        <img
+                            src={themeMode === "light" ? `${process.env.PUBLIC_URL}/icon.png` : `${process.env.PUBLIC_URL}/icon1.png`}
+                            alt="Logo"
+                            style={{ height: "40px" }}
+                        />
                     </Header>
-
                     {/* Контент */}
                     <Content style={{ margin: "0 16px", padding: 24, background: colorBgContainer, borderRadius: borderRadiusLG }}>
                         <Routes>
@@ -126,7 +127,7 @@ const App = () => {
                     </Content>
 
                     {/* Подвал */}
-                    <Footer style={{ textAlign: "center" }}>Phaum Studio {new Date().getFullYear()} Created by Phaum</Footer>
+                    <Footer style={{ textAlign: "center" }}>Created by Phaum {new Date().getFullYear()}</Footer>
                 </Layout>
             </Layout>
         </Router>

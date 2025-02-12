@@ -277,13 +277,13 @@ const MentorPanel = () => {
                     disabled={text === "admin" || text === "teacher"}
                     onChange={(value) =>
                         setUsers((prev) =>
-                            prev.map((u) => (u.id === record.id ? { ...u, role: value } : u))
+                            prev
+                        .filter((group) => group !== "admin" && group !== "teacher")
+                        .map((u) => (u.id === record.id ? { ...u, role: value } : u))
                         )
                     }
                     style={{ width: 120 }}
                 >
-                    <Option value="admin" disabled={true}>Админ</Option>
-                    <Option value="teacher" disabled={true}>Ментор</Option>
                     <Option value="student">Студент</Option>
                     <Option value="user">Пользователь</Option>
                 </Select>
@@ -327,17 +327,30 @@ const MentorPanel = () => {
             onFilter: (value, record) => record.group === value,
             render: (text, record) => (
                 <Select
-                    disabled={text === "admin" || text === "mentor"}
                     value={text}
-                    onChange={(value) => updateUser(record.id, { ...record, group: value })}
+                    disabled={text === "admin" || text === "mentor"}
+                    onChange={(value) => updateUserGroup(record.id, value)}
                     style={{ width: 120 }}
                 >
-                    {groups.map((g) => (
-                        <Select.Option key={g} value={g}>
-                            {g}
-                        </Select.Option>
-                    ))}
+                    {groups
+                        .filter((group) => group !== "admin" && group !== "mentor")
+                        .map((group) => (
+                            <Select.Option key={group} value={group}>
+                                {group}
+                            </Select.Option>
+                        ))}
                 </Select>
+            ),
+        },
+        {
+            title: "Действия",
+            key: "actions",
+            render: (_, record) => (
+                <>
+                    <Button type="primary" onClick={() => updateUser(record.id, record)} style={{ marginRight: 8 }}>
+                        Сохранить
+                    </Button>
+                </>
             ),
         },
     ];
