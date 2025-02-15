@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
         cb(null, uploadFolder);
     },
     filename: (req, file, cb) => {
-        const originalName = Buffer.from(file.originalname, "latin1").toString("utf8"); // Декодируем кириллицу
+        const originalName = Buffer.from(file.originalname, "latin1").toString("utf8");
         cb(null, `${Date.now()}_${originalName}`);
     },
 });
@@ -33,7 +33,7 @@ newsRouter.post(
     "/create_news",
     authenticateToken,
     authorizeRole(["teacher", "admin"]),
-    upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]), // 1 фото + до 5 файлов
+    upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]),
     (req, res) => {
         const { title, content, audience } = req.body;
         if (!title || !content || !audience || !Array.isArray(JSON.parse(audience))) {
@@ -42,10 +42,8 @@ newsRouter.post(
         const id = Date.now();
         const filePath = path.join(markdownFolder, `${id}.md`);
         const indexPath = path.join(markdownFolder, "news-index.json");
-        // Получаем ссылки на загруженные файлы
         const image = req.files["image"] ? `/uploads-news/${req.files["image"][0].filename}` : null;
         const files = req.files["files"] ? req.files["files"].map(file => `/uploads-news/${file.filename}`) : [];
-        // Сохраняем контент новости
         fs.writeFile(filePath, content, (err) => {
             if (err) {
                 return res.status(500).send("Ошибка при сохранении новости");
@@ -79,8 +77,8 @@ newsRouter.get("/read", authenticateToken, (req, res) => {
         }
         const filteredNews = newsIndex.map((news) => ({
             ...news,
-            canEdit: userRole === "teacher" || userRole === "admin", // Разрешение редактирования
-        })).filter((news) => (userRole === "guest" && news.audience.includes("guest")) || // Гость видит только гостевые объявления
+            canEdit: userRole === "teacher" || userRole === "admin",
+        })).filter((news) => (userRole === "guest" && news.audience.includes("guest")) ||
             (userRole !== "guest" && news.audience.includes(userRole)));
         res.json(filteredNews);
     } else {
@@ -218,7 +216,7 @@ newsRouter.get("/test-image/:filename", (req, res) => {
     const { filename } = req.params;
     const filePath = filename;
     if (fs.existsSync(path.join(uploadFolder, filePath))) {
-        res.sendFile(filePath, { root: uploadFolder }); // Указываем root как uploadFolder
+        res.sendFile(filePath, { root: uploadFolder });
     } else {
         res.status(404).json({ message: "Изображение не найдено" });
     }
@@ -282,16 +280,13 @@ newsRouter.delete("/:id/:filename", authenticateToken, authorizeRole(["teacher",
         return res.status(404).json({ message: "Файл не найден" });
     }
     const filePath = path.join(uploadFolder, path.basename(fileToDelete));
-    // Удаляем файл с сервера
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
         console.log(`Файл ${filename} успешно удален с сервера`);
     } else {
         console.warn(`Файл ${filePath} отсутствует на сервере`);
     }
-    // Удаляем файл из массива `files`
     newsItem.files = newsItem.files.filter((file) => file !== fileToDelete);
-    // Обновляем `news-index.json`
     fs.writeFileSync(indexPath, JSON.stringify(newsIndex, null, 2));
     console.log(`Файл ${filename} успешно удален из JSON индекса`);
     res.status(200).json({ message: "Файл успешно удален" });

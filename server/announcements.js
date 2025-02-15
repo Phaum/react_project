@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
         cb(null, uploadFolder);
     },
     filename: (req, file, cb) => {
-        const originalName = Buffer.from(file.originalname, "latin1").toString("utf8"); // Декодируем кириллицу
+        const originalName = Buffer.from(file.originalname, "latin1").toString("utf8");
         cb(null, `${Date.now()}_${originalName}`);
     },
 });
@@ -33,7 +33,7 @@ announcementsRouter.post(
     "/create_announcements",
     authenticateToken,
     authorizeRole(["teacher", "admin"]),
-    upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]), // 1 фото + до 5 файлов
+    upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]),
     (req, res) => {
         console.log("Полученные данные:", req.body);
         const { title, content, audience, groups } = req.body;

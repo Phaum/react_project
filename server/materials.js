@@ -591,7 +591,7 @@ materialsRouter.get("/test-image/:filename", (req, res) => {
     const { filename } = req.params;
     const filePath = filename;
     if (fs.existsSync(path.join(uploadFolder, filePath))) {
-        res.sendFile(filePath, { root: uploadFolder }); // Указываем root как uploadFolder
+        res.sendFile(filePath, { root: uploadFolder });
     } else {
         res.status(404).json({ message: "Изображение не найдено" });
     }

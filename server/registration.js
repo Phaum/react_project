@@ -27,7 +27,6 @@ registrationRouter.post(
         const { login,username,lastName,stud_group,password } = req.body;
         try {
             const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
-            // Проверяем существование пользователя
             const existingUser = users.find((user) => user.login === login);
             if (existingUser) {
                 return res.status(400).send("Пользователь с таким именем уже существует");
@@ -85,7 +84,7 @@ registrationRouter.post("/verify", (req, res) => {
         }
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === decoded.id);
-        res.json({ login: user.login, role: user.role, group: user.group }); // Возвращаем данные из токена
+        res.json({ login: user.login, role: user.role, group: user.group });
     });
 });
 
