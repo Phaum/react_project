@@ -17,30 +17,27 @@ if (!fs.existsSync(uploadFolder)) {
     fs.mkdirSync(uploadFolder);
 }
 
-// Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, uploadFolder);
     },
     filename: (req, file, cb) => {
-        const originalName = Buffer.from(file.originalname, "latin1").toString("utf8"); // Декодируем кириллицу
+        const originalName = Buffer.from(file.originalname, "latin1").toString("utf8");
         cb(null, `${Date.now()}_${originalName}`);
     },
 });
 
 const upload = multer({ storage });
 
-// Эндпоинт для создания новости
 materialsRouter.post(
     "/create_materials",
     authenticateToken,
     authorizeRole(["teacher", "admin"]),
-    upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]), // 1 фото + до 5 файлов
+    upload.fields([{ name: "image", maxCount: 1 }, { name: "files", maxCount: 5 }]),
     (req, res) => {
         const { title, content, audience, groups } = req.body;
         const indexPath = path.join(markdownFolder, "materials-index.json");
         const usersFile = path.join(__dirname, "users.json");
-        // Загружаем пользователя из `users.json`
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === req.user.id);
         if (!user) {
@@ -51,7 +48,6 @@ materialsRouter.post(
         }
         const id = Date.now();
         const filePath = path.join(markdownFolder, `${id}.md`);
-        // Получаем ссылки на загруженные файлы
         const image = req.files["image"] ? `/uploads-materials/${req.files["image"][0].filename}` : null;
         const files = req.files["files"] ? req.files["files"].map(file => `/uploads-materials/${file.filename}`) : [];
         const newMaterials = {
@@ -63,7 +59,6 @@ materialsRouter.post(
             image,
             files,
         };
-        // Сохраняем контент новости в `.md`
         fs.writeFile(filePath, content, (err) => {
             if (err) {
                 return res.status(500).send("Ошибка при сохранении новости");
@@ -80,7 +75,6 @@ materialsRouter.post(
     }
 );
 
-// Получение списка всех групп
 materialsRouter.get("/groups", authenticateToken, (req, res) => {
     const groupsFile = path.join(__dirname, "groups.json");
     try {
@@ -91,23 +85,18 @@ materialsRouter.get("/groups", authenticateToken, (req, res) => {
     }
 });
 
-// Получение списка групп конкретной новости
 materialsRouter.get("/:id/groups", authenticateToken, (req, res) => {
     const { id } = req.params;
-    // Проверяем, существует ли файл с индексом объявлений
     if (!fs.existsSync(markdownFolder)) {
         return res.status(404).json({ message: "Файл новостей не найден" });
     }
     try {
-        // Загружаем все объявления
         const indexPath = path.join(markdownFolder, "materials-index.json");
         const materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-        // Ищем нужную новость по `id`
         const announcement = materialsIndex.find((ann) => String(ann.id) === id);
         if (!announcement) {
             return res.status(404).json({ message: "Новость не найдена" });
         }
-        // Получаем группы новости (или пустой массив, если они не заданы)
         const group = Array.isArray(announcement.group) ? announcement.group : [];
         res.status(200).json({ group });
     } catch (error) {
@@ -116,41 +105,6 @@ materialsRouter.get("/:id/groups", authenticateToken, (req, res) => {
     }
 });
 
-// Эндпоинт для чтения новостей на основе роли
-// materialsRouter.get("/read", authenticateToken, (req, res) => {
-//     const { id } = req.user;
-//     const indexPath = path.join(markdownFolder, "materials-index.json");
-//     const usersFile = path.join(__dirname, "users.json");
-//     if (fs.existsSync(indexPath)) {
-//         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
-//         const user = users.find((u) => u.id === id);
-//         if (!user) {
-//             return res.status(403).json({ message: "Пользователь не найден" });
-//         }
-//         const userRole = user.role; // Получаем актуальную роль
-//         const userGroup = user.group; // Получаем актуальную группу
-//         // Загружаем новости
-//         let materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-//         // Если роль admin, показываем все новости
-//         if (userRole === "admin") {
-//             return res.send(materialsIndex);
-//         }
-//         // Фильтруем новости по ролям и группам
-//         let filteredMaterials = materialsIndex.filter(
-//             (announcement) =>
-//                 announcement.audience.includes(userRole) ||
-//                 announcement.audience.includes("guest")
-//         );
-//         // Оставляем только новости, где `groups` пересекается с `userGroups`
-//         const userGroups = Array.isArray(userGroup) ? userGroup : [userGroup]; // Превращаем в массив
-//         if (filteredMaterials.length === 0) {
-//             return res.json([]); // Всегда возвращаем пустой массив
-//         }
-//         res.send(filteredMaterials);
-//     } else {
-//         res.status(404).json({ message: "Список объявлений пуст" });
-//     }
-// });
 materialsRouter.get("/read", authenticateToken, (req, res) => {
     const { id } = req.user;
     const indexPath = path.join(markdownFolder, "materials-index.json");
@@ -161,55 +115,37 @@ materialsRouter.get("/read", authenticateToken, (req, res) => {
         if (!user) {
             return res.status(403).json({ message: "Пользователь не найден" });
         }
-        const userRole = user.role; // Получаем актуальную роль
-        const userGroups = Array.isArray(user.group) ? user.group : [user.group]; // Преобразуем в массив
-        // Загружаем новости
+        const userRole = user.role;
+        const userGroups = Array.isArray(user.group) ? user.group : [user.group];
         let materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-        // Если роль admin, показываем все новости
         if (userRole === "admin") {
-            // return res.send(materialsIndex);
             return res.json(materialsIndex.map((material) => ({ ...material, canEdit: true })));
         }
-        // Фильтруем новости по ролям и группам
-        // let filteredMaterials = materialsIndex.filter(
-        //     (announcement) =>
-        //         announcement.audience.includes(userRole) ||
-        //         announcement.audience.includes("guest")
-        // );
-        // // Оставляем только новости, где `groups` пересекается с `userGroups`
-        // const userGroups = Array.isArray(userGroup) ? userGroup : [userGroup]; // Превращаем в массив
-        // if (filteredMaterials.length === 0) {
-        //     return res.json([]); // Всегда возвращаем пустой массив
-        // }
-        // res.send(filteredMaterials);
         const filteredMaterials = materialsIndex
             .filter((material) => {
                 const matchesRole =
-                    (userRole === "guest" && material.audience.includes("guest")) || // Гость видит только гостевые объявления
-                    (userRole !== "guest" && material.audience.includes(userRole));  // Остальные роли видят только свое
+                    (userRole === "guest" && material.audience.includes("guest")) ||
+                    (userRole !== "guest" && material.audience.includes(userRole));
                 const matchesGroup = Array.isArray(material.group) && material.group.some((group) => userGroups.includes(group));
                 return matchesRole && matchesGroup;
             })
             .map((material) => ({
                 ...material,
-                canEdit: userRole === "teacher", // Только учителя могут редактировать
+                canEdit: userRole === "teacher",
             }));
-        // Возвращаем результат
         res.json(filteredMaterials);
     } else {
         res.status(404).json({ message: "Список объявлений пуст" });
     }
 });
 
-// Раздача статических файлов (если еще не добавлено)
 materialsRouter.use("/files", express.static(uploadFolder));
 
-// Эндпоинт для чтения конкретной новости по id
 materialsRouter.get("/:id", authenticateToken, (req, res) => {
-    const { id } = req.params; // Получаем ID из параметров маршрута
+    const { id } = req.params;
     const userId = req.user.id;
-    const filePath = path.join(markdownFolder, `${id}.md`); // Путь к файлу новости
-    const indexPath = path.join(markdownFolder, "materials-index.json"); // Путь к индексу новостей
+    const filePath = path.join(markdownFolder, `${id}.md`);
+    const indexPath = path.join(markdownFolder, "materials-index.json");
     const usersFile = path.join(__dirname, "users.json");
     try {
         if (!fs.existsSync(filePath)) {
@@ -227,16 +163,12 @@ materialsRouter.get("/:id", authenticateToken, (req, res) => {
                 return res.status(500).json({ message: "Ошибка чтения индекса новостей" });
             }
         }
-        // Ищем новость в индексе
         const materialsItem = materialsIndex.find((materials) => String(materials.id) === id);
         if (!materialsItem) {
             return res.status(404).json({ message: "Новость не найдена в индексе" });
         }
-        // Определяем, может ли пользователь редактировать/удалять
         const canEdit = user.role === "teacher" || user.role === "admin";
-        // Добавляем ссылку на изображение, если есть
         const imageUrl = materialsItem.image ? `${baseBackendUrl}/materials/test-image/${path.basename(materialsItem.image)}` : null;
-        // Добавляем ссылки на файлы, если они есть
         const filesUrl = materialsItem.files ? materialsItem.files.map(file => ({
             url: `${baseBackendUrl}/materials/files/${path.basename(file)}`,
             name: file.split("_").slice(1).join("_")
@@ -257,7 +189,6 @@ materialsRouter.get("/:id", authenticateToken, (req, res) => {
     }
 });
 
-// Эндпоинт для скачивания файла
 materialsRouter.get("/materials/articles/files/:filename", (req, res) => {
     const { filename } = req.params;
     const filePath = path.join(uploadFolder, filename);
@@ -273,7 +204,6 @@ materialsRouter.get("/materials/articles/files/:filename", (req, res) => {
     }
 });
 
-// Эндпоинт для редактирования новости
 materialsRouter.put("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id } = req.params;
     const { title, content, audience, groups } = req.body;
@@ -286,9 +216,7 @@ materialsRouter.put("/:id", authenticateToken, authorizeRole(["teacher", "admin"
         return res.status(400).json({ message: "Заголовок и содержание обязательны" });
     }
     try {
-        // Обновляем файл с новостью
         fs.writeFileSync(filePath, content, "utf-8");
-        // Обновляем заголовок в индексе
         let materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
         const index = materialsIndex.findIndex((materials) => String(materials.id) === id);
         if (index !== -1) {
@@ -306,32 +234,25 @@ materialsRouter.put("/:id", authenticateToken, authorizeRole(["teacher", "admin"
     }
 });
 
-
-// Эндпоинт для удаления новости
 materialsRouter.delete("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
-    const { id } = req.params; // ID из параметров маршрута
-    const filePath = path.join(markdownFolder, `${id}.md`); // Путь к файлу новости
-    const indexPath = path.join(markdownFolder, "materials-index.json"); // Путь к файлу индекса
-    // Проверяем, существует ли файл новости
+    const { id } = req.params;
+    const filePath = path.join(markdownFolder, `${id}.md`);
+    const indexPath = path.join(markdownFolder, "materials-index.json");
     if (fs.existsSync(filePath)) {
-        // Удаляем файл с новостью
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error("Ошибка при удалении файла новости:", err);
                 return res.status(500).send("Не удалось удалить новость");
             }
             try {
-                // Обновляем materials-index.json
                 let materialsIndex = [];
                 if (fs.existsSync(indexPath)) {
                     materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
                 }
-                // Находим новость в индексе
                 const materialsItem = materialsIndex.find((materials) => String(materials.id) === String(id));
                 if (!materialsItem) {
                     return res.status(404).send("Новость не найдена в индексе");
                 }
-                // Удаляем связанный файл изображения, если он есть
                 if (materialsItem.image) {
                     const imagePath = path.join(__dirname, materialsItem.image.replace("/uploads-materials/", "uploads-materials/"));
                     if (fs.existsSync(imagePath)) {
@@ -346,9 +267,7 @@ materialsRouter.delete("/:id", authenticateToken, authorizeRole(["teacher", "adm
                         }
                     });
                 }
-                // Фильтруем индекс, удаляя запись с указанным ID
                 materialsIndex = materialsIndex.filter((materials) => String(materials.id) !== String(id));
-                // Записываем обновлённый индекс обратно в файл
                 fs.writeFileSync(indexPath, JSON.stringify(materialsIndex, null, 2));
                 res.send({ message: "Новость и связанное изображение успешно удалены" });
             } catch (error) {
@@ -366,7 +285,7 @@ materialsRouter.get("/test-image/:filename", (req, res) => {
     const { filename } = req.params;
     const filePath = filename;
     if (fs.existsSync(path.join(uploadFolder, filePath))) {
-        res.sendFile(filePath, { root: uploadFolder }); // Указываем root как uploadFolder
+        res.sendFile(filePath, { root: uploadFolder });
     } else {
         res.status(404).json({ message: "Изображение не найдено" });
     }
@@ -389,7 +308,6 @@ materialsRouter.post("/:id/upload_image", authenticateToken, authorizeRole(["tea
     res.status(200).json({ message: "Изображение успешно загружено", imageUrl });
 });
 
-// Эндпоинт для удаления определенного фото
 materialsRouter.delete("/:id/delete_image", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id } = req.params;
     const indexPath = path.join(markdownFolder, "materials-index.json");
@@ -421,33 +339,27 @@ materialsRouter.delete("/:id/:filename", authenticateToken, authorizeRole(["teac
         return res.status(404).json({ message: "Новость или файлы не найдены" });
     }
     console.log("Список файлов в новости:", materialsItem.files);
-    // Найдём файл, игнорируя временной штамп
     const fileToDelete = materialsItem.files.find((file) => {
         const fileBaseName = path.basename(file);
-        return fileBaseName.includes(`_${filename}`); // Ищем файл, который заканчивается на нужное имя
+        return fileBaseName.includes(`_${filename}`);
     });
     if (!fileToDelete) {
         console.error(`Файл ${filename} не найден в списке файлов новости!`);
         return res.status(404).json({ message: "Файл не найден" });
     }
     const filePath = path.join(uploadFolder, path.basename(fileToDelete));
-    // Удаляем файл с сервера
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
         console.log(`Файл ${filename} успешно удален с сервера`);
     } else {
         console.warn(`Файл ${filePath} отсутствует на сервере`);
     }
-    // Удаляем файл из массива `files`
     materialsItem.files = materialsItem.files.filter((file) => file !== fileToDelete);
-    // Обновляем `materials-index.json`
     fs.writeFileSync(indexPath, JSON.stringify(materialsIndex, null, 2));
     console.log(`Файл ${filename} успешно удален из JSON индекса`);
     res.status(200).json({ message: "Файл успешно удален" });
 });
 
-
-// Добавление новых файлов в новость
 materialsRouter.post("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), upload.array("files", 5), (req, res) => {
     const { id } = req.params;
     const indexPath = path.join(markdownFolder, "materials-index.json");
@@ -462,55 +374,43 @@ materialsRouter.post("/:id", authenticateToken, authorizeRole(["teacher", "admin
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "Файлы не загружены" });
     }
-    // Записываем файлы как строки, а не объекты
     const newFiles = req.files.map(file => `/uploads-materials/${file.filename}`);
-    // Обновляем список файлов
     materialsItem.files = [...(materialsItem.files || []), ...newFiles];
-    // Перезаписываем materials-index.json
     fs.writeFileSync(indexPath, JSON.stringify(materialsIndex, null, 2), "utf-8");
     res.status(200).json({ message: "Файлы успешно добавлены", files: newFiles });
 });
 
-// Создание статьи внутри новости
 materialsRouter.post("/:id/articles", authenticateToken, authorizeRole(["admin", "teacher"]), (req, res) => {
     const { id } = req.params;
     const { title, content, audience } = req.body;
     const articlesFolder = path.join(__dirname, "markdown-files-articles");
     const materialsFile = path.join(markdownFolder, "materials-index.json");
     try {
-        // Проверяем, существует ли файл материалов
         if (!fs.existsSync(materialsFile)) {
             return res.status(404).json({ message: "Файл материалов не найден" });
         }
         let materials = JSON.parse(fs.readFileSync(materialsFile, "utf-8"));
-        // Ищем нужный материал
         const materialIndex = materials.findIndex((m) => String(m.id) === id);
         if (materialIndex === -1) {
             return res.status(404).json({ message: "Материал не найден" });
         }
-        // Проверяем, есть ли массив `articles`, если нет — создаём
         if (!Array.isArray(materials[materialIndex].articles)) {
             materials[materialIndex].articles = [];
         }
-        // Генерируем новый ID статьи
         const articleId = Date.now().toString();
-        // Создаём новую статью
         const newArticle = {
             id: articleId,
             title,
-            content, // Храним краткое описание (если нужно)
+            content,
             audience: audience || [],
             image: null,
             files: []
         };
-        // Добавляем статью в массив `articles` у материала
         materials[materialIndex].articles.push(newArticle);
-        // Сохраняем `.md` файл с контентом статьи
         if (!fs.existsSync(articlesFolder)) {
             fs.mkdirSync(articlesFolder, { recursive: true });
         }
         fs.writeFileSync(path.join(articlesFolder, `${articleId}.md`), content, "utf-8");
-        // Обновляем `materials-index.json`
         fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
         res.status(201).json({ message: "Статья создана", article: newArticle });
     } catch (error) {
@@ -519,22 +419,6 @@ materialsRouter.post("/:id/articles", authenticateToken, authorizeRole(["admin",
     }
 });
 
-
-// Получение списка статей внутри новости
-// materialsRouter.get("/:id/articles", (req, res) => {
-//     const { id } = req.params;
-//     const indexPath = path.join(markdownFolder, "materials-index.json");
-//     if (!fs.existsSync(indexPath)) {
-//         return res.status(404).json({ message: "Файл индекса не найден" });
-//     }
-//     const materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-//     const materialsItem = materialsIndex.find((materials) => String(materials.id) === id);
-//     if (!materialsItem || !materialsItem.articles) {
-//         return res.status(404).json({ message: "Статьи не найдены" });
-//     }
-//     res.status(200).json(materialsItem.articles);
-// });
-// Получение списка статей внутри новости
 materialsRouter.get("/:id/articles", authenticateToken , (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
@@ -550,8 +434,8 @@ materialsRouter.get("/:id/articles", authenticateToken , (req, res) => {
             console.log("Пользователь не найден в users.json:", userId);
             return res.status(403).json({ message: "Пользователь не найден" });
         }
-        const userRole = user.role; // Получаем роль пользователя
-        const userGroups = Array.isArray(user.group) ? user.group : [user.group]; // Преобразуем в массив
+        const userRole = user.role;
+        const userGroups = Array.isArray(user.group) ? user.group : [user.group];
         let materialsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
         let materialsItem = materialsIndex.find((materials) => String(materials.id) === id);
         if (!materialsItem || !materialsItem.articles) {
@@ -565,12 +449,6 @@ materialsRouter.get("/:id/articles", authenticateToken , (req, res) => {
         console.log(userGroups);
         console.log(articlesItem);
         const filteredArticles = articlesItem
-            // .filter((articles) => {
-            //     const matchesRole =
-            //         (userRole !== "guest" && articles.audience.includes(userRole));  // Остальные роли видят только свое
-            //     const matchesGroup = Array.isArray(articles.group) && articles.group.some((group) => userGroups.includes(group));
-            //     return matchesRole && matchesGroup;
-            // })
             .map((articles) => ({
                 ...articles,
                 canEdit: userRole === "teacher",
@@ -582,55 +460,6 @@ materialsRouter.get("/:id/articles", authenticateToken , (req, res) => {
     }
 });
 
-// Получение конкретной статьи
-// materialsRouter.get("/:id/articles/:articleId", (req, res) => {
-//     const { id, articleId } = req.params;
-//     const userRole = req.role;
-//     const materialsFile = path.join(markdownFolder, "materials-index.json");
-//     const articlesFolder = path.join(__dirname, "markdown-files-articles");
-//     try {
-//         // Читаем файл материалов
-//         if (!fs.existsSync(materialsFile)) {
-//             return res.status(404).json({ message: "Файл материалов не найден" });
-//         }
-//         const materials = JSON.parse(fs.readFileSync(materialsFile, "utf-8"));
-//         // Ищем нужный материал
-//         const material = materials.find((m) => String(m.id) === id);
-//         if (!material) {
-//             return res.status(404).json({ message: "Материал не найден" });
-//         }
-//         // Ищем статью внутри материала
-//         const article = material.articles.find((a) => String(a.id) === articleId);
-//         if (!article) {
-//             return res.status(404).json({ message: "Статья не найдена" });
-//         }
-//         // Загружаем контент статьи из `.md` файла (если он есть)
-//         const filePath = path.join(articlesFolder, `${articleId}.md`);
-//         let content = article.content; // Используем `content` из JSON по умолчанию
-//         if (fs.existsSync(filePath)) {
-//             content = fs.readFileSync(filePath, "utf-8");
-//         }
-//         // Формируем ответ
-//         let responseData = {
-//             id: article.id,
-//             title: article.title,
-//             content,
-//             image: article.image ? `${baseBackendUrl}/materials/test-image/${path.basename(article.image)}` : null,
-//             files: article.files.map(file => ({
-//                 url: `${baseBackendUrl}/materials/files/${path.basename(file)}`,
-//                 name: file.split("_").slice(1).join("_")
-//             }))
-//         };
-//         // Если роль НЕ user и НЕ student, добавляем `audience`
-//         if (userRole !== "user" && userRole !== "student") {
-//             responseData.audience = material.audience || [];
-//         }
-//         res.status(200).json(responseData);
-//     } catch (err) {
-//         console.error("Ошибка обработки запроса:", err);
-//         res.status(500).json({ message: "Внутренняя ошибка сервера" });
-//     }
-// });
 materialsRouter.get("/:id/articles/:articleId", authenticateToken , (req, res) => {
     const { id, articleId } = req.params;
     const userId = req.user.id;
@@ -638,7 +467,6 @@ materialsRouter.get("/:id/articles/:articleId", authenticateToken , (req, res) =
     const articlesFolder = path.join(__dirname, "markdown-files-articles");
     const usersFile = path.join(__dirname, "users.json");
     try {
-        // Читаем список пользователей
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === userId);
         if (!user) {
@@ -659,22 +487,11 @@ materialsRouter.get("/:id/articles/:articleId", authenticateToken , (req, res) =
         if (!article) {
             return res.status(404).json({ message: "Статья не найдена" });
         }
-        // Проверяем доступ по ролям и группам
-        // const hasAccess =
-        //     article.audience.includes(userRole) ||
-        //     article.audience.includes("guest") ||
-        //     (Array.isArray(article.group) && article.group.some((group) => userGroups.includes(group)));
-        //
-        // if (!hasAccess) {
-        //     return res.status(403).json({ message: "У вас нет доступа к этой статье" });
-        // }
-        // Загружаем контент статьи из `.md` файла (если он есть)
         const filePath = path.join(articlesFolder, `${articleId}.md`);
-        let content = article.content; // Используем `content` из JSON по умолчанию
+        let content = article.content;
         if (fs.existsSync(filePath)) {
             content = fs.readFileSync(filePath, "utf-8");
         }
-        // Формируем ответ
         let responseData = {
             id: article.id,
             title: article.title,
@@ -685,7 +502,7 @@ materialsRouter.get("/:id/articles/:articleId", authenticateToken , (req, res) =
                     url: `${baseBackendUrl}/materials/files/${path.basename(file)}`,
                     name: file.split("_").slice(1).join("_"),
                 }))
-                : [], // Если файлов нет, передаём пустой массив
+                : [],
             canEdit: userRole === "teacher" || userRole === "admin",
         };
         res.status(200).json(responseData);
@@ -695,37 +512,28 @@ materialsRouter.get("/:id/articles/:articleId", authenticateToken , (req, res) =
     }
 });
 
-
-// Удаление статьи
 materialsRouter.delete("/:id/articles/:articleId", authenticateToken, authorizeRole(["admin", "teacher"]), (req, res) => {
     const { id, articleId } = req.params;
     const articlesFolder = path.join(__dirname, "markdown-files-articles");
     const materialsFile = path.join(markdownFolder, "materials-index.json");
     try {
-        // Загружаем список материалов
         if (!fs.existsSync(materialsFile)) {
             return res.status(404).json({ message: "Файл материалов не найден" });
         }
         let materials = JSON.parse(fs.readFileSync(materialsFile, "utf-8"));
-        // Ищем нужный материал
         const materialIndex = materials.findIndex((m) => String(m.id) === id);
         if (materialIndex === -1) {
             return res.status(404).json({ message: "Материал не найден" });
         }
-        // Фильтруем статьи, исключая удаляемую
         const updatedArticles = materials[materialIndex].articles.filter(article => String(article.id) !== articleId);
-        // Если статья не найдена, возвращаем ошибку
         if (updatedArticles.length === materials[materialIndex].articles.length) {
             return res.status(404).json({ message: "Статья не найдена" });
         }
-        // Обновляем `articles` у материала
         materials[materialIndex].articles = updatedArticles;
-        // Удаляем `.md` файл статьи (если существует)
         const articlePath = path.join(articlesFolder, `${articleId}.md`);
         if (fs.existsSync(articlePath)) {
             fs.unlinkSync(articlePath);
         }
-        // Сохраняем изменения в `materials-index.json`
         fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
         res.status(200).json({ message: "Статья удалена" });
     } catch (error) {
@@ -734,35 +542,28 @@ materialsRouter.delete("/:id/articles/:articleId", authenticateToken, authorizeR
     }
 });
 
-// Эндпоинт для обновления статьи
 materialsRouter.put("/:id/articles/:articleId", authenticateToken, authorizeRole(["admin", "teacher"]), (req, res) => {
     const { id, articleId } = req.params;
     const { title, content, audience } = req.body;
     const articlesFolder = path.join(__dirname, "markdown-files-articles");
     const materialsFile = path.join(markdownFolder, "materials-index.json");
     try {
-        // Загружаем список материалов
         if (!fs.existsSync(materialsFile)) {
             return res.status(404).json({ message: "Файл материалов не найден" });
         }
         let materials = JSON.parse(fs.readFileSync(materialsFile, "utf-8"));
-        // Ищем нужный материал
         const materialIndex = materials.findIndex((m) => String(m.id) === id);
         if (materialIndex === -1) {
             return res.status(404).json({ message: "Материал не найден" });
         }
-        // Ищем нужную статью
         const articleIndex = materials[materialIndex].articles.findIndex(article => String(article.id) === articleId);
         if (articleIndex === -1) {
             return res.status(404).json({ message: "Статья не найдена" });
         }
-        // Обновляем данные статьи
         materials[materialIndex].articles[articleIndex].title = title;
         materials[materialIndex].articles[articleIndex].audience = audience || [];
-        // Сохраняем `.md` файл с обновленным контентом
         const articlePath = path.join(articlesFolder, `${articleId}.md`);
         fs.writeFileSync(articlePath, content, "utf-8");
-        // Обновляем `materials-index.json`
         fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
         res.status(200).json({ message: "Статья обновлена", article: materials[materialIndex].articles[articleIndex] });
     } catch (error) {
@@ -771,7 +572,6 @@ materialsRouter.put("/:id/articles/:articleId", authenticateToken, authorizeRole
     }
 });
 
-// Эндпоинт для скачивания файла //посмотреть что да как
 materialsRouter.get("/articles/files/:filename", (req, res) => {
     const { filename } = req.params;
     const filePath = path.join(uploadFolder, filename);
@@ -809,18 +609,15 @@ materialsRouter.post("/:id/articles/:articleId/upload_image", authenticateToken,
     if (!materialsItem) {
         return res.status(404).send("Новость не найдена");
     }
-    // Ищем нужную статью
     const articleItem = materialsItem.articles.find((article) => String(article.id) === articleId);
     if (!articleItem) {
         return res.status(404).send("Статья не найдена");
     }
-    // Сохраняем изображение в конкретную статью
     articleItem.image = imageUrl;
     fs.writeFileSync(indexPath, JSON.stringify(materialsIndex, null, 2));
     res.status(200).json({ message: "Изображение успешно загружено", imageUrl });
 });
 
-// Эндпоинт для удаления определенного фото
 materialsRouter.delete("/:id/articles/:articleId/delete_image", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id, articleId } = req.params;
     const indexPath = path.join(markdownFolder, "materials-index.json");
@@ -836,7 +633,6 @@ materialsRouter.delete("/:id/articles/:articleId/delete_image", authenticateToke
     res.status(200).send("Изображение успешно удалено");
 });
 
-// удаление файлов статьи
 materialsRouter.delete("/:id/articles/:articleId/:filename", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id, articleId, filename } = req.params;
     const indexPath = path.join(markdownFolder, "materials-index.json");
@@ -857,33 +653,27 @@ materialsRouter.delete("/:id/articles/:articleId/:filename", authenticateToken, 
         return res.status(404).json({ message: "Статья или файлы не найдены" });
     }
     console.log("Список файлов в статье:", articleItem.files);
-    // Найдём файл, игнорируя временной штамп
     const fileToDelete = articleItem.files.find((file) => {
         const fileBaseName = path.basename(file);
-        return fileBaseName.includes(`_${filename}`); // Ищем файл, который заканчивается на нужное имя
+        return fileBaseName.includes(`_${filename}`);
     });
     if (!fileToDelete) {
         console.error(`Файл ${filename} не найден в списке файлов статьи!`);
         return res.status(404).json({ message: "Файл не найден" });
     }
     const filePath = path.join(uploadFolder, path.basename(fileToDelete));
-    // Удаляем файл с сервера
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
         console.log(`Файл ${filename} успешно удален с сервера`);
     } else {
         console.warn(`Файл ${filePath} отсутствует на сервере`);
     }
-    // Удаляем файл из массива `files` статьи
     articleItem.files = articleItem.files.filter((file) => file !== fileToDelete);
-    // Обновляем `materials-index.json`
     fs.writeFileSync(indexPath, JSON.stringify(materialsIndex, null, 2));
     console.log(`Файл ${filename} успешно удален из JSON индекса`);
     res.status(200).json({ message: "Файл успешно удален" });
 });
 
-
-// Добавление новых файлов в новость
 materialsRouter.post("/:id/articles/:articleId/upload_files", authenticateToken, authorizeRole(["teacher", "admin"]), upload.array("files", 5), (req, res) => {
     const { id, articleId } = req.params;
     const indexPath = path.join(markdownFolder, "materials-index.json");
@@ -895,7 +685,6 @@ materialsRouter.post("/:id/articles/:articleId/upload_files", authenticateToken,
     if (!materialsItem) {
         return res.status(404).json({ message: "Материал не найден" });
     }
-    // Найти статью внутри материала
     const articleItem = materialsItem.articles.find((article) => String(article.id) === articleId);
     if (!articleItem) {
         return res.status(404).json({ message: "Статья не найдена" });
@@ -903,10 +692,8 @@ materialsRouter.post("/:id/articles/:articleId/upload_files", authenticateToken,
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "Файлы не загружены" });
     }
-    // Записываем файлы в массив `files` статьи
     const newFiles = req.files.map(file => `/uploads-materials/${file.filename}`);
     articleItem.files = [...(articleItem.files || []), ...newFiles];
-    // Обновляем `materials-index.json`
     fs.writeFileSync(indexPath, JSON.stringify(materialsIndex, null, 2), "utf-8");
     res.status(200).json({ message: "Файлы успешно добавлены в статью", files: newFiles });
 });

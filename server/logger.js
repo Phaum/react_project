@@ -1,7 +1,6 @@
 const winston = require("winston");
 const path = require("path");
 
-// Конфигурация логера
 const logger = winston.createLogger({
     level: "info",
     format: winston.format.combine(
@@ -13,7 +12,6 @@ const logger = winston.createLogger({
     ],
 });
 
-// Функция логирования
 const logAction = (userId, action, details) => {
     const message = `UserID: ${userId} | Action: ${action} | Details: ${JSON.stringify(details)}`;
     logger.info(message);

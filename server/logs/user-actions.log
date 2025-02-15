@@ -341,3 +341,9 @@
 2025-02-13 01:23:13 | INFO | Запрос: GET /ranking | IP: ::1
 2025-02-13 01:23:13 | INFO | Запрос: GET /ranking/groups | IP: ::1
 2025-02-13 01:23:14 | INFO | Запрос: POST /registration/verify | IP: ::1
+2025-02-13 02:37:30 | INFO | Сервер запущен на порте:5000
+2025-02-13 02:37:32 | INFO | Запрос: POST /registration/verify | IP: ::1
+2025-02-13 02:37:38 | INFO | Запрос: POST /registration/login | IP: ::1
+2025-02-13 02:37:38 | INFO | Запрос: POST /registration/verify | IP: ::1
+2025-02-13 02:37:41 | INFO | Запрос: POST /registration/verify | IP: ::1
+2025-02-13 02:37:41 | INFO | Запрос: POST /registration/verify | IP: ::1

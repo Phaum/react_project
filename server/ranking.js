@@ -12,7 +12,6 @@ const rankingFile = path.join(__dirname, "ranking.json");
 const groupsFile = path.join(__dirname, "groups.json");
 const usersFile = path.join(__dirname, "users.json");
 
-// Middleware для проверки роли пользователя (требуются роли "admin" или "teacher")
 const checkUserRole = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
@@ -46,7 +45,6 @@ const checkUserRole = (req, res, next) => {
     });
 };
 
-// Middleware для проверки валидности токена
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
@@ -66,7 +64,6 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Получение списка команд
 rankingRouter.get("/", authenticateToken, (req, res) => {
     try {
         const groupsData = fs.readFileSync(groupsFile, "utf8");
@@ -83,15 +80,12 @@ rankingRouter.get("/", authenticateToken, (req, res) => {
         }
         const isAdminOrTeacher = user.role === "admin" || user.role === "teacher";
 
-        // Фильтруем команды по существующим группам
         const filteredRanking = ranking.filter((team) => groups.includes(team.group));
 
-        // Если данные отфильтрованы – обновляем файл рейтинга
         if (filteredRanking.length !== ranking.length) {
             fs.writeFileSync(rankingFile, JSON.stringify(filteredRanking, null, 2), "utf8");
         }
 
-        // Добавляем флаг, позволяющий редактировать (для admin/teacher)
         const result = filteredRanking.map((team) => ({
             ...team,
             canEdit: isAdminOrTeacher,
@@ -104,11 +98,9 @@ rankingRouter.get("/", authenticateToken, (req, res) => {
     }
 });
 
-// Добавление новой команды
 rankingRouter.post("/", checkUserRole, (req, res) => {
     const { group, points } = req.body;
     try {
-        // Чтение списка допустимых групп из файла groups.json
         const groupsData = fs.readFileSync(groupsFile, "utf8");
         const groups = JSON.parse(groupsData);
         if (!group || points === undefined) {
@@ -117,15 +109,12 @@ rankingRouter.post("/", checkUserRole, (req, res) => {
         if (!groups.includes(group)) {
             return res.status(400).json({ message: "Такой группы не существует!" });
         }
-        // Чтение текущего рейтинга из файла ranking.json
         const rankingData = fs.readFileSync(rankingFile, "utf8");
         const ranking = JSON.parse(rankingData);
-        // Проверка: если команда с указанной группой уже существует, выдаём ошибку
         const existingTeam = ranking.find((team) => team.group === group);
         if (existingTeam) {
             return res.status(400).json({ message: "Команда для этой группы уже существует!" });
         }
-        // Если такой группы еще нет в рейтинге, создаём новую команду
         const newTeam = { id: uuidv4(), group, points };
         ranking.push(newTeam);
         fs.writeFileSync(rankingFile, JSON.stringify(ranking, null, 2), "utf8");
@@ -137,11 +126,9 @@ rankingRouter.post("/", checkUserRole, (req, res) => {
 });
 
 
-// Изменение баллов команды
 rankingRouter.put("/:id", checkUserRole, (req, res) => {
     const { id } = req.params;
     const { points } = req.body;
-
     try {
         const rankingData = fs.readFileSync(rankingFile, "utf8");
         const ranking = JSON.parse(rankingData);
@@ -150,7 +137,6 @@ rankingRouter.put("/:id", checkUserRole, (req, res) => {
         if (teamIndex === -1) {
             return res.status(404).json({ message: "Команда не найдена" });
         }
-
         ranking[teamIndex].points = points;
         fs.writeFileSync(rankingFile, JSON.stringify(ranking, null, 2), "utf8");
 
@@ -161,10 +147,8 @@ rankingRouter.put("/:id", checkUserRole, (req, res) => {
     }
 });
 
-// Удаление команды
 rankingRouter.delete("/:id", checkUserRole, (req, res) => {
     const { id } = req.params;
-
     try {
         const rankingData = fs.readFileSync(rankingFile, "utf8");
         let ranking = JSON.parse(rankingData);
@@ -179,7 +163,6 @@ rankingRouter.delete("/:id", checkUserRole, (req, res) => {
     }
 });
 
-// Эндпоинт для получения списка доступных групп
 rankingRouter.get("/groups", (req, res) => {
     try {
         const groupsData = fs.readFileSync(groupsFile, "utf8");

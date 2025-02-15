@@ -17,7 +17,6 @@ if (!fs.existsSync(uploadFolder)) {
     fs.mkdirSync(uploadFolder);
 }
 
-// Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, uploadFolder);
@@ -30,9 +29,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-
-
-// Эндпоинт для создания новости
 newsRouter.post(
     "/create_news",
     authenticateToken,
@@ -66,7 +62,6 @@ newsRouter.post(
     }
 );
 
-// Эндпоинт для чтения новостей на основе роли
 newsRouter.get("/read", authenticateToken, (req, res) => {
     const { id } = req.user;
     const indexPath = path.join(markdownFolder, "news-index.json");
@@ -92,122 +87,8 @@ newsRouter.get("/read", authenticateToken, (req, res) => {
         res.status(404).json({ message: "Список новостей пуст" });
     }
 });
-// newsRouter.get("/:id", authenticateToken, (req, res) => {
-//     const { id } = req.params; // ID новости
-//     const userId = req.user.id; // ID пользователя из токена
-//     const filePath = path.join(markdownFolder, `${id}.md`);
-//     const indexPath = path.join(markdownFolder, "news-index.json");
-//     const usersFile = path.join(__dirname, "users.json");
-//     try {
-//         // Проверяем существование файла новости
-//         if (!fs.existsSync(filePath)) {
-//             return res.status(404).json({ message: "Новость не найдена" });
-//         }
-//         // Читаем пользователей
-//         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
-//         const user = users.find((u) => u.id === userId);
-//         if (!user) {
-//             return res.status(403).json({ message: "Пользователь не найден" });
-//         }
-//         const userRole = user.role; // Определяем роль пользователя
-//         // Читаем содержимое файла новости
-//         const content = fs.readFileSync(filePath, "utf-8");
-//         // Проверяем существование индекса новостей
-//         if (!fs.existsSync(indexPath)) {
-//             return res.status(500).json({ message: "Ошибка чтения индекса новостей" });
-//         }
-//         // Загружаем индекс новостей
-//         const newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-//         // Ищем новость в индексе
-//         const newsItem = newsIndex.find((news) => String(news.id) === id);
-//         if (!newsItem) {
-//             return res.status(404).json({ message: "Новость не найдена в индексе" });
-//         }
-//         // Проверяем, доступна ли новость пользователю
-//         if (!newsItem.audience.includes(userRole) && !newsItem.audience.includes("guest")) {
-//             return res.status(403).json({ message: "У вас нет доступа к этой новости" });
-//         }
-//         // Добавляем ссылку на изображение, если есть
-//         const imageUrl = newsItem.image ? `${baseBackendUrl}/news/test-image/${path.basename(newsItem.image)}` : null;
-//         // Добавляем ссылки на файлы, если есть
-//         const filesUrl = newsItem.files ? newsItem.files.map(file => ({
-//             url: `${baseBackendUrl}/news/files/${path.basename(file)}`,
-//             name: file.split("_").slice(1).join("_")
-//         })) : [];
-//         // Формируем ответ
-//         let responseData = {
-//             id: newsItem.id,
-//             title: newsItem.title,
-//             content,
-//             image: imageUrl,
-//             files: filesUrl,
-//         };
-//         // Если у пользователя роль admin или teacher — добавляем audience
-//         if (userRole === "admin" || userRole === "teacher") {
-//             responseData.audience = newsItem.audience || [];
-//         }
-//         res.status(200).json(responseData);
-//     } catch (err) {
-//         console.error("Ошибка обработки запроса:", err);
-//         res.status(500).json({ message: "Внутренняя ошибка сервера" });
-//     }
-// });
 
-// Раздача статических файлов (если еще не добавлено)
 newsRouter.use("/files", express.static(uploadFolder));
-
-// Эндпоинт для чтения конкретной новости по id
-// newsRouter.get("/:id", authenticateToken,(req, res) => {
-//     const { id } = req.params; // Получаем ID из параметров маршрута
-//     const userRole = req.role;
-//     const filePath = path.join(markdownFolder, `${id}.md`); // Путь к файлу новости
-//     const indexPath = path.join(markdownFolder, "news-index.json"); // Путь к индексу новостей
-//     try {
-//         // Проверяем существование файла новости
-//         if (!fs.existsSync(filePath)) {
-//             return res.status(404).json({ message: "Новость не найдена" });
-//         }
-//         // Читаем содержимое файла новости
-//         const content = fs.readFileSync(filePath, "utf-8");
-//         // Проверяем существование файла индекса
-//         let newsIndex = [];
-//         if (fs.existsSync(indexPath)) {
-//             try {
-//                 newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-//             } catch (err) {
-//                 console.error("Ошибка парсинга индекса:", err);
-//                 return res.status(500).json({ message: "Ошибка чтения индекса новостей" });
-//             }
-//         }
-//         // Ищем новость в индексе
-//         const newsItem = newsIndex.find((news) => String(news.id) === id);
-//         if (!newsItem) {
-//             return res.status(404).json({ message: "Новость не найдена в индексе" });
-//         }
-//         // Добавляем ссылку на изображение, если есть
-//         const imageUrl = newsItem.image ? `${baseBackendUrl}/news/test-image/${path.basename(newsItem.image)}` : null;
-//         // Добавляем ссылки на файлы, если они есть
-//         const filesUrl = newsItem.files ? newsItem.files.map(file => ({
-//             url: `${baseBackendUrl}/news/files/${path.basename(file)}`,
-//             name: file.split("_").slice(1).join("_")
-//         })) : [];
-//         let responseData = {
-//             id: newsItem.id,
-//             title: newsItem.title,
-//             content,
-//             image: imageUrl, // Ссылка на изображение
-//             files: filesUrl, // Массив файлов с именами и ссылками
-//         };
-//         // Если пользователь НЕ user и НЕ student, добавляем поле audience
-//         if (userRole !== "user" && userRole !== "student") {
-//             responseData.audience = newsItem.audience || [];
-//         }
-//         res.status(200).json(responseData);
-//     } catch (err) {
-//         console.error("Ошибка обработки запроса:", err);
-//         res.status(500).json({ message: "Внутренняя ошибка сервера" });
-//     }
-// });
 
 newsRouter.get("/:id", authenticateToken,(req, res) => {
     const { id } = req.params;
@@ -231,16 +112,12 @@ newsRouter.get("/:id", authenticateToken,(req, res) => {
                 return res.status(500).json({ message: "Ошибка чтения индекса новостей" });
             }
         }
-        // Ищем новость в индексе
         const newsItem = newsIndex.find((news) => String(news.id) === id);
         if (!newsItem) {
             return res.status(404).json({ message: "Новость не найдена в индексе" });
         }
-        // Определяем, может ли пользователь редактировать/удалять
         const canEdit = user.role === "teacher" || user.role === "admin";
-        // Добавляем ссылку на изображение, если есть
         const imageUrl = newsItem.image ? `${baseBackendUrl}/news/test-image/${path.basename(newsItem.image)}` : null;
-        // Добавляем ссылки на файлы, если они есть
         const filesUrl = newsItem.files ? newsItem.files.map(file => ({
             url: `${baseBackendUrl}/news/files/${path.basename(file)}`,
             name: file.split("_").slice(1).join("_")
@@ -249,8 +126,8 @@ newsRouter.get("/:id", authenticateToken,(req, res) => {
             id: newsItem.id,
             title: newsItem.title,
             content,
-            image: imageUrl, // Ссылка на изображение
-            files: filesUrl, // Массив файлов с именами и ссылками
+            image: imageUrl,
+            files: filesUrl,
             audience: newsItem.audience,
             canEdit,
         };
@@ -261,7 +138,6 @@ newsRouter.get("/:id", authenticateToken,(req, res) => {
     }
 });
 
-// Эндпоинт для редактирования новости
 newsRouter.put("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id } = req.params;
     const { title, content, audience } = req.body;
@@ -274,9 +150,7 @@ newsRouter.put("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), (
         return res.status(400).json({ message: "Заголовок и содержание обязательны" });
     }
     try {
-        // Обновляем файл с новостью
         fs.writeFileSync(filePath, content, "utf-8");
-        // Обновляем заголовок в индексе
         let newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
         const index = newsIndex.findIndex((news) => String(news.id) === id);
         if (index !== -1) {
@@ -293,31 +167,25 @@ newsRouter.put("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), (
     }
 });
 
-// Эндпоинт для удаления новости
 newsRouter.delete("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
-    const { id } = req.params; // ID из параметров маршрута
-    const filePath = path.join(markdownFolder, `${id}.md`); // Путь к файлу новости
-    const indexPath = path.join(markdownFolder, "news-index.json"); // Путь к файлу индекса
-    // Проверяем, существует ли файл новости
+    const { id } = req.params;
+    const filePath = path.join(markdownFolder, `${id}.md`);
+    const indexPath = path.join(markdownFolder, "news-index.json");
     if (fs.existsSync(filePath)) {
-        // Удаляем файл с новостью
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error("Ошибка при удалении файла новости:", err);
                 return res.status(500).send("Не удалось удалить новость");
             }
             try {
-                // Обновляем news-index.json
                 let newsIndex = [];
                 if (fs.existsSync(indexPath)) {
                     newsIndex = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
                 }
-                // Находим новость в индексе
                 const newsItem = newsIndex.find((news) => String(news.id) === String(id));
                 if (!newsItem) {
                     return res.status(404).send("Новость не найдена в индексе");
                 }
-                // Удаляем связанный файл изображения, если он есть
                 if (newsItem.image) {
                     const imagePath = path.join(__dirname, newsItem.image.replace("/uploads-news/", "uploads-news/"));
                     if (fs.existsSync(imagePath)) {
@@ -332,9 +200,7 @@ newsRouter.delete("/:id", authenticateToken, authorizeRole(["teacher", "admin"])
                         }
                     });
                 }
-                // Фильтруем индекс, удаляя запись с указанным ID
                 newsIndex = newsIndex.filter((news) => String(news.id) !== String(id));
-                // Записываем обновлённый индекс обратно в файл
                 fs.writeFileSync(indexPath, JSON.stringify(newsIndex, null, 2));
                 res.send({ message: "Новость и связанное изображение успешно удалены" });
             } catch (error) {
@@ -375,7 +241,6 @@ newsRouter.post("/:id/upload_image", authenticateToken, authorizeRole(["teacher"
     res.status(200).json({ message: "Изображение успешно загружено", imageUrl });
 });
 
-// Эндпоинт для удаления определенного фото
 newsRouter.delete("/:id/delete_image", authenticateToken, authorizeRole(["teacher", "admin"]), (req, res) => {
     const { id } = req.params;
     const indexPath = path.join(markdownFolder, "news-index.json");
@@ -407,11 +272,10 @@ newsRouter.delete("/:id/:filename", authenticateToken, authorizeRole(["teacher",
         console.error("Новость или файлы не найдены в индексе!");
         return res.status(404).json({ message: "Новость или файлы не найдены" });
     }
-    console.log("📂 Список файлов в новости:", newsItem.files);
-    // ✅ Найдём файл, игнорируя временной штамп
+    console.log("Список файлов в новости:", newsItem.files);
     const fileToDelete = newsItem.files.find((file) => {
         const fileBaseName = path.basename(file);
-        return fileBaseName.includes(`_${filename}`); // Ищем файл, который заканчивается на нужное имя
+        return fileBaseName.includes(`_${filename}`);
     });
     if (!fileToDelete) {
         console.error(`Файл ${filename} не найден в списке файлов новости!`);
@@ -433,7 +297,6 @@ newsRouter.delete("/:id/:filename", authenticateToken, authorizeRole(["teacher",
     res.status(200).json({ message: "Файл успешно удален" });
 });
 
-// Добавление новых файлов в новость
 newsRouter.post("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), upload.array("files", 5), (req, res) => {
     const { id } = req.params;
     const indexPath = path.join(markdownFolder, "news-index.json");
@@ -448,11 +311,8 @@ newsRouter.post("/:id", authenticateToken, authorizeRole(["teacher", "admin"]), 
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "Файлы не загружены" });
     }
-    // Записываем файлы как строки, а не объекты
     const newFiles = req.files.map(file => `/uploads-news/${file.filename}`);
-    // Обновляем список файлов
     newsItem.files = [...(newsItem.files || []), ...newFiles];
-    // Перезаписываем news-index.json
     fs.writeFileSync(indexPath, JSON.stringify(newsIndex, null, 2), "utf-8");
     res.status(200).json({ message: "Файлы успешно добавлены", files: newFiles });
 });

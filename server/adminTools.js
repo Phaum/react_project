@@ -8,7 +8,6 @@ const router = express.Router();
 const usersFile = path.join(__dirname, "users.json");
 const groupsFile = path.join(__dirname, "groups.json");
 
-// Получение списка пользователей
 router.get("/", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     try {
         const users = JSON.parse(fs.readFileSync(usersFile, "utf8"));
@@ -18,7 +17,6 @@ router.get("/", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     }
 });
 
-// Обновление данных пользователя
 router.put("/:id", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     const { id } = req.params;
     const { username, role } = req.body;
@@ -37,7 +35,6 @@ router.put("/:id", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     }
 });
 
-// Удаление пользователя
 router.delete("/:id", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     const { id } = req.params;
     try {
@@ -50,10 +47,9 @@ router.delete("/:id", authenticateToken, authorizeRole(["admin"]), (req, res) =>
     }
 });
 
-// Сброс пароля с вводом от администратора
 router.patch("/:id/reset-password", authenticateToken, authorizeRole(["admin"]), async (req, res) => {
     const { id } = req.params;
-    const { newPassword } = req.body; // Получаем новый пароль от клиента
+    const { newPassword } = req.body;
     const indexPath = path.join(__dirname, "users.json");
     if (!newPassword || newPassword.length < 6) {
         return res.status(400).json({ message: "Пароль должен быть не менее 6 символов" });
@@ -64,7 +60,6 @@ router.patch("/:id/reset-password", authenticateToken, authorizeRole(["admin"]),
         if (userIndex === -1) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
-        // Хешируем новый пароль
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         users[userIndex].password = hashedPassword;
         fs.writeFileSync(indexPath, JSON.stringify(users, null, 2));
@@ -74,7 +69,6 @@ router.patch("/:id/reset-password", authenticateToken, authorizeRole(["admin"]),
     }
 });
 
-// Получение списка всех групп
 router.get("/groups", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     try {
         const groups = JSON.parse(fs.readFileSync(groupsFile, "utf8"));
@@ -84,7 +78,6 @@ router.get("/groups", authenticateToken, authorizeRole(["admin"]), (req, res) =>
     }
 });
 
-// Добавление новой группы
 router.post("/groups", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     const { newGroup } = req.body;
     if (!newGroup) {
@@ -103,7 +96,6 @@ router.post("/groups", authenticateToken, authorizeRole(["admin"]), (req, res) =
     }
 });
 
-// Изменение группы пользователя
 router.put("/:id/group", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     const { id } = req.params;
     const { newGroup } = req.body;
@@ -125,7 +117,6 @@ router.put("/:id/group", authenticateToken, authorizeRole(["admin"]), (req, res)
     }
 });
 
-// Создание нового пользователя
 router.post("/create", authenticateToken, authorizeRole(["admin"]), async (req, res) => {
     const { username, password, role, group } = req.body;
     const indexPath = path.join(__dirname, "users.json");
@@ -135,17 +126,15 @@ router.post("/create", authenticateToken, authorizeRole(["admin"]), async (req, 
     try {
         let users = JSON.parse(fs.readFileSync(indexPath, "utf8"));
         let groups = JSON.parse(fs.readFileSync(groupsFile, "utf8"));
-        // Проверяем, существует ли пользователь с таким именем
         if (users.some(user => user.username === username)) {
             return res.status(400).json({ message: "Такой пользователь уже существует" });
         }
         if (!groups.includes(group)) {
             return res.status(400).json({ message: "Указанная группа не существует" });
         }
-        // Хешируем пароль перед сохранением
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = {
-            id: uuidv4(), // Генерируем уникальный ID
+            id: uuidv4(),
             username,
             password: hashedPassword,
             role,
@@ -159,18 +148,15 @@ router.post("/create", authenticateToken, authorizeRole(["admin"]), async (req, 
     }
 });
 
-// Удаление группы (если в ней нет пользователей)
 router.delete("/groups/:groupName", authenticateToken, authorizeRole(["admin"]), (req, res) => {
     const { groupName } = req.params;
     try {
         let users = JSON.parse(fs.readFileSync(usersFile, "utf8"));
         let groups = JSON.parse(fs.readFileSync(groupsFile, "utf8"));
-        // Проверяем, есть ли пользователи в этой группе
         const usersInGroup = users.some((user) => user.group === groupName);
         if (usersInGroup) {
             return res.status(400).json({ message: "Нельзя удалить группу, в которой есть пользователи!" });
         }
-        // Удаляем группу из списка
         groups = groups.filter((group) => group !== groupName);
         fs.writeFileSync(groupsFile, JSON.stringify(groups, null, 2));
         res.status(200).json({ message: "Группа успешно удалена", groups });

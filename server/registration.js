@@ -13,7 +13,6 @@ if (!fs.existsSync(usersFile)) {
 
 const registrationRouter = express.Router();
 
-// Регистрация пользователя
 registrationRouter.post(
     "/register",
     [
@@ -41,8 +40,8 @@ registrationRouter.post(
                 lastName,
                 stud_group,
                 password: hashedPassword,
-                role: "user", // Роль по умолчанию
-                group: "none", // Группа по умолчанию
+                role: "user",
+                group: "none",
             };
             users.push(newUser);
             fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
@@ -54,7 +53,6 @@ registrationRouter.post(
     }
 );
 
-// Авторизация пользователя
 registrationRouter.post("/login", async (req, res) => {
     const { login, password } = req.body;
     try {
@@ -85,8 +83,6 @@ registrationRouter.post("/verify", (req, res) => {
         if (err) {
             return res.status(403).send("Недействительный токен");
         }
-        // Читаем пользователей из файла
-        // const usersFile = path.join(__dirname, "users.json");
         const users = JSON.parse(fs.readFileSync(usersFile, "utf-8"));
         const user = users.find((u) => u.id === decoded.id);
         res.json({ login: user.login, role: user.role, group: user.group }); // Возвращаем данные из токена
